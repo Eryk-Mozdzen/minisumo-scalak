@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include <util/delay.h>
 
 #include "hardware/include/uart.h"
@@ -15,15 +16,15 @@ int main() {
 	uart_init(38400);
 	ws2812b_init(&led, 1);
 	
-	uint8_t x = 0;	
-	
     while(1) {
 
-		printf("Hello world! %d\n", x);
+		ws2812b_rainbow_step(&led, 0.1, 10);
 		
-		led.array[0] = (ColorRGB_t){0, 255, x};
+		//led.array[0] = (ColorRGB_t){255, 0, 0};
+		//led.array[0] = (ColorRGB_t){0, 255, 0};
+		//led.array[0] = (ColorRGB_t){0, 0, 255};
 			
-		x++;
+		//printf("%d\t%d\t%d\n", led.array[0].r, led.array[0].g, led.array[0].b);
 		
 		ws2812b_show(&led);
 		

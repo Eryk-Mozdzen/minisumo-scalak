@@ -12,13 +12,17 @@
 #define F_CPU 8000000UL
 #endif
 
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
+#include <math.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include "hardware_config.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/pgmspace.h>
+#include <util/delay.h>
+
+#define WS2812B_LED_PORT	PORTB
+#define WS2812B_LED_DDR		DDRB
+#define WS2812B_LED_PIN		0
 
 typedef struct {
 	uint8_t r;
@@ -29,10 +33,11 @@ typedef struct {
 typedef struct {
 	ColorRGB_t* array;
 	uint16_t n;
+	float animation;
 } WS2812B_t;
 
 void ws2812b_init(WS2812B_t*, uint16_t);
+void ws2812b_rainbow_step(WS2812B_t*, float, float);
 void ws2812b_show(WS2812B_t*);
-//void ws2812b_show(ColorRGB*);
 
 #endif /* LED_WS2812B_H_ */
