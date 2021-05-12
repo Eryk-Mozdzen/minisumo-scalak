@@ -2,6 +2,10 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+hardware\src\dist.c
+
+hardware\src\motors.c
+
 hardware\src\uart.c
 
 hardware\src\ws2812b.c

@@ -20,10 +20,6 @@
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 
-#define WS2812B_LED_PORT	PORTB
-#define WS2812B_LED_DDR		DDRB
-#define WS2812B_LED_PIN		0
-
 typedef struct {
 	uint8_t r;
 	uint8_t g;
@@ -35,6 +31,9 @@ typedef struct {
 	uint16_t n;
 	float animation;
 } WS2812B_t;
+
+ColorRGB_t multiply(ColorRGB_t, float);
+ColorRGB_t interpolate(ColorRGB_t, ColorRGB_t, float);
 
 void ws2812b_init(WS2812B_t*, uint16_t);
 void ws2812b_rainbow_step(WS2812B_t*, float, float);

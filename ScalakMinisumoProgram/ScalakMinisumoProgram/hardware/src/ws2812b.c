@@ -22,13 +22,29 @@ const ColorRGB_t rainbow_colors[] PROGMEM = {
 	{255, 0, 127}
 };
 
+ColorRGB_t multiply(ColorRGB_t color, float n) {
+	return (ColorRGB_t) {
+		color.r * n,
+		color.g * n,
+		color.b * n
+	};
+}
+
+ColorRGB_t interpolate(ColorRGB_t color1, ColorRGB_t color2, float alpha) {
+	return (ColorRGB_t) {
+		(1.-alpha)*color1.r + alpha*color2.r,
+		(1.-alpha)*color1.g + alpha*color2.g,
+		(1.-alpha)*color1.b + alpha*color2.b
+	};
+}
+
 void ws2812b_init(WS2812B_t *strip, uint16_t n) {
 	strip->n = n;
 	strip->array = (ColorRGB_t*)malloc(n*sizeof(ColorRGB_t));
 	strip->animation = 0;
 	
-	WS2812B_LED_PORT &= ~(1<<WS2812B_LED_PIN);
-	WS2812B_LED_DDR |= (1<<WS2812B_LED_PIN);
+	DDRB |= (1<<PINB0);
+	PORTB &= ~(1<<PINB0);
 }
 
 void ws2812b_rainbow_step(WS2812B_t *strip, float dX, float T) {
@@ -41,14 +57,11 @@ void ws2812b_rainbow_step(WS2812B_t *strip, float dX, float T) {
 
 		ColorRGB_t color1, color2;
 		memcpy_P(&color1, &rainbow_colors[(uint8_t)floor(index)%K], sizeof(ColorRGB_t));
-		memcpy_P(&color2, &rainbow_colors[(uint8_t)ceil(index)%K], sizeof(ColorRGB_t));
+		memcpy_P(&color2, &rainbow_colors[(uint8_t) ceil(index)%K], sizeof(ColorRGB_t));
 		
 		float alpha = index - floor(index);
-		strip->array[i] = (ColorRGB_t){
-			(1.-alpha)*color1.r + alpha*color2.r,
-			(1.-alpha)*color1.g + alpha*color2.g,
-			(1.-alpha)*color1.b + alpha*color2.b
-		};
+		strip->array[i] = interpolate(color1, color2, alpha);
+		strip->array[i] = multiply(strip->array[i], 0.15);
 	}
 	
 	strip->animation +=dX;
@@ -72,12 +85,12 @@ void ws2812b_show(WS2812B_t *strip) {
 			"ld __tmp_reg__, %a0+\n"
 			"rcall send_led_strip_byte%=\n"  // Send green component.
 			"ld __tmp_reg__, %a0+\n"
-			"call send_led_strip_byte%=\n"  // Send blue component.
+			"call send_led_strip_byte%=\n"   // Send blue component.
 			"rjmp led_strip_asm_end%=\n"     // Jump past the assembly subroutines.
 
 			// send_led_strip_byte subroutine:  Sends a byte to the LED strip.
 			"send_led_strip_byte%=:\n"
-			"rcall send_led_strip_bit%=\n"  // Send most-significant bit (bit 7).
+			"rcall send_led_strip_bit%=\n"   // Send most-significant bit (bit 7).
 			"rcall send_led_strip_bit%=\n"
 			"rcall send_led_strip_bit%=\n"
 			"rcall send_led_strip_bit%=\n"
@@ -104,8 +117,8 @@ void ws2812b_show(WS2812B_t *strip) {
 			
 			: "=b" (array)
 			: "0" (array),							// %a0 points to the next color to display
-			"I" (_SFR_IO_ADDR(WS2812B_LED_PORT)),   // %2 is the port register (e.g. PORTC)
-			"I" (WS2812B_LED_PIN)					// %3 is the pin number (0-8)
+			"I" (_SFR_IO_ADDR(PORTB)),		// %2 is the port register (e.g. PORTC)
+			"I" (PINB0)						// %3 is the pin number (0-8)
 		);
 	}
 	sei();

@@ -1,4 +1,5 @@
-main.d main.o: .././main.c \
+hardware/src/dist.d hardware/src/dist.o: ../hardware/src/dist.c \
+ ../hardware/src/../include/dist.h \
  d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h \
  d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
  d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdint.h \
@@ -12,15 +13,9 @@ main.d main.o: .././main.c \
  d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\common.h \
  d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
- d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\pgmspace.h \
- d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h \
- d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
- d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
- .././hardware/include/uart.h .././hardware/include/ws2812b.h \
- d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h \
- d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- .././hardware/include/motors.h .././hardware/include/dist.h
+ d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h
+
+../hardware/src/../include/dist.h:
 
 d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h:
 
@@ -49,23 +44,3 @@ d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\
 d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h:
 
 d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
-
-d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\pgmspace.h:
-
-d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h:
-
-d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h:
-
-d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h:
-
-.././hardware/include/uart.h:
-
-.././hardware/include/ws2812b.h:
-
-d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h:
-
-d:\programy\atmel\ studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
-
-.././hardware/include/motors.h:
-
-.././hardware/include/dist.h:

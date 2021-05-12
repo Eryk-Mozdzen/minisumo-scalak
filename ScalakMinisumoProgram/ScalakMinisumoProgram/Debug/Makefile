@@ -41,6 +41,8 @@ SUBDIRS :=  \
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../hardware/src/dist.c \
+../hardware/src/motors.c \
 ../hardware/src/uart.c \
 ../hardware/src/ws2812b.c \
 ../main.c
@@ -53,21 +55,29 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+hardware/src/dist.o \
+hardware/src/motors.o \
 hardware/src/uart.o \
 hardware/src/ws2812b.o \
 main.o
 
 OBJS_AS_ARGS +=  \
+hardware/src/dist.o \
+hardware/src/motors.o \
 hardware/src/uart.o \
 hardware/src/ws2812b.o \
 main.o
 
 C_DEPS +=  \
+hardware/src/dist.d \
+hardware/src/motors.d \
 hardware/src/uart.d \
 hardware/src/ws2812b.d \
 main.d
 
 C_DEPS_AS_ARGS +=  \
+hardware/src/dist.d \
+hardware/src/motors.d \
 hardware/src/uart.d \
 hardware/src/ws2812b.d \
 main.d
@@ -86,6 +96,20 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+hardware/src/dist.o: ../hardware/src/dist.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)D:\Programy\Atmel Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programy\Atmel Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programy\Atmel Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+hardware/src/motors.o: ../hardware/src/motors.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)D:\Programy\Atmel Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programy\Atmel Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programy\Atmel Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
 hardware/src/uart.o: ../hardware/src/uart.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
