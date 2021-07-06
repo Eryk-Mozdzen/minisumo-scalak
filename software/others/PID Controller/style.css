@@ -1,0 +1,14 @@
+canvas {
+    /*border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;*/
+    display: block;
+    background-color: darkgray;
+    /*width: 300px;
+    height: 300px;*/
+}
+
+body {
+    background-color: #303030;
+    margin: 0px;
+}

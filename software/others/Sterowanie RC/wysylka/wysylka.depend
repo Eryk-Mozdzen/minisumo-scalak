@@ -1,0 +1,120 @@
+# depslib dependency file v1.0
+1536563416 source:c:\users\rafi\projekty codeblocks\wysylka\serialclass.cpp
+	"SerialClass.h"
+
+1536563398 c:\users\rafi\projekty codeblocks\wysylka\serialclass.h
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+
+1543159334 source:c:\users\rafi\projekty codeblocks\wysylka\main.cpp
+	<iostream>
+	<stdio.h>
+	<tchar.h>
+	"SerialClass.h"
+	<string>
+	<vector>
+	<windows.h>
+	<time.h>
+	<math.h>
+
+1536563416 source:c:\users\rafi\projekty codeblocks\gay series\wysylka\serialclass.cpp
+	"SerialClass.h"
+
+1536563398 c:\users\rafi\projekty codeblocks\gay series\wysylka\serialclass.h
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+
+1551118282 source:c:\users\rafi\projekty codeblocks\gay series\wysylka\main.cpp
+	<iostream>
+	<stdio.h>
+	<tchar.h>
+	"SerialClass.h"
+	<string>
+	<vector>
+	<windows.h>
+	<time.h>
+	<math.h>
+	<fstream>
+
+1551124360 source:c:\users\erykm\desktop\moje wyczyny\liceum\inne pomys³y, projekty, inicjatywy lub plany\wszystko do projektu  przygody krola pergolca 2\film, muzyka\gay series\gay series\wysylka\main.cpp
+	<iostream>
+	<stdio.h>
+	<tchar.h>
+	"SerialClass.h"
+	<string>
+	<vector>
+	<windows.h>
+	<time.h>
+	<math.h>
+	<fstream>
+
+1551124360 c:\users\erykm\desktop\moje wyczyny\liceum\inne pomys³y, projekty, inicjatywy lub plany\wszystko do projektu  przygody krola pergolca 2\film, muzyka\gay series\gay series\wysylka\serialclass.h
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+
+1551124360 source:c:\users\erykm\desktop\moje wyczyny\liceum\inne pomys³y, projekty, inicjatywy lub plany\wszystko do projektu  przygody krola pergolca 2\film, muzyka\gay series\gay series\wysylka\serialclass.cpp
+	"SerialClass.h"
+
+1557333530 source:c:\users\erykm\desktop\wysylka\main.cpp
+	<iostream>
+	<stdio.h>
+	<tchar.h>
+	"SerialClass.h"
+	<string>
+	<vector>
+	<windows.h>
+	<time.h>
+	<math.h>
+	<fstream>
+
+1551124360 c:\users\erykm\desktop\wysylka\serialclass.h
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+
+1551124360 source:c:\users\erykm\desktop\wysylka\serialclass.cpp
+	"SerialClass.h"
+
+1557334720 source:c:\users\erykm\desktop\moje wyczyny\liceum\vloat intvators\9. ba³tyckie bitwy robotów gdañsk 2019\scalak (kontynuacja) (dokañczanie)\sterowanie rc\wysylka\main.cpp
+	<iostream>
+	<stdio.h>
+	<tchar.h>
+	"SerialClass.h"
+	<string>
+	<vector>
+	<windows.h>
+	<time.h>
+	<math.h>
+	<fstream>
+
+1551124360 c:\users\erykm\desktop\moje wyczyny\liceum\vloat intvators\9. ba³tyckie bitwy robotów gdañsk 2019\scalak (kontynuacja) (dokañczanie)\sterowanie rc\wysylka\serialclass.h
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+
+1551124360 source:c:\users\erykm\desktop\moje wyczyny\liceum\vloat intvators\9. ba³tyckie bitwy robotów gdañsk 2019\scalak (kontynuacja) (dokañczanie)\sterowanie rc\wysylka\serialclass.cpp
+	"SerialClass.h"
+
+1557334720 source:c:\users\erykm\desktop\9. ba³tyckie bitwy robotów gdañsk 2019\scalak (kontynuacja) (dokañczanie)\sterowanie rc\wysylka\main.cpp
+	<iostream>
+	<stdio.h>
+	<tchar.h>
+	"SerialClass.h"
+	<string>
+	<vector>
+	<windows.h>
+	<time.h>
+	<math.h>
+	<fstream>
+
+1551124360 c:\users\erykm\desktop\9. ba³tyckie bitwy robotów gdañsk 2019\scalak (kontynuacja) (dokañczanie)\sterowanie rc\wysylka\serialclass.h
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+
+1551124360 source:c:\users\erykm\desktop\9. ba³tyckie bitwy robotów gdañsk 2019\scalak (kontynuacja) (dokañczanie)\sterowanie rc\wysylka\serialclass.cpp
+	"SerialClass.h"
+
