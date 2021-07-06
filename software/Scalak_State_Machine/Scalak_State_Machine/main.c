@@ -2,6 +2,7 @@
 
 #include <avr/io.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "src/pid.h"
@@ -51,7 +52,7 @@ rgb_color color_function(double value, double MIN, double MAX) {
 
 int main() {
 	
-	uart_begin(9600);
+	uart_init(38400);
 	decoder_rc5_initialize();
 	pid_initialize(0, 127.5 + 50, 0, 0);
 	
@@ -66,8 +67,8 @@ int main() {
 	set_tactics_state(eeprom_read(ADDRESS_TACTICS_STATE));
 	
     while(1) {
-		//update_program_state_rc5();
-		update_program_state_button();
+		update_program_state_rc5();
+		//update_program_state_button();
 		//update_program_state_module();
 
 		switch(current_program_state) {
@@ -100,12 +101,12 @@ int main() {
 			default:	break;
 		}
 		
-		//uart_printf("Program: %i Tactics: %i\n", current_program_state, current_tactics_state);
+		printf("Program: %u Tactics: %u\n", current_program_state, current_tactics_state);
 		
-		//uart_printf("%i\t%i\n", drv8838_get_speed(LEFT), drv8838_get_speed(RIGHT));
-		//uart_printf("%i%i%i%i%i\n", ir38khz_get_state(0), ir38khz_get_state(1), ir38khz_get_state(2), ir38khz_get_state(3), ir38khz_get_state(4));
-		//uart_printf("%i%i\t%i\t%i\n", qtr1a_get_state(LEFT), qtr1a_get_state(RIGHT), qtr1a_get_state_raw(LEFT), qtr1a_get_state_raw(RIGHT));
-		//uart_printf("Switch: %b\tButton: %b\n", switch_get_state(), button_get_state());
+		//printf("%d\t%d\n", drv8838_get_speed(LEFT), drv8838_get_speed(RIGHT));
+		//printf("%u%u%u%u%u\n", ir38khz_get_state(0), ir38khz_get_state(1), ir38khz_get_state(2), ir38khz_get_state(3), ir38khz_get_state(4));
+		//printf("%u%u\t%u\t%u\n", qtr1a_get_state(LEFT), qtr1a_get_state(RIGHT), qtr1a_get_state_raw(LEFT), qtr1a_get_state_raw(RIGHT));
+		//printf("Switch: %u\tButton: %u\n", switch_get_state(), button_get_state());
 		
 		_delay_ms(10);
     }
