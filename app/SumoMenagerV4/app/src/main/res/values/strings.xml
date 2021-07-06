@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Sumo Menager V4</string>
+    
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="bluetooth_on">Turn on Bluetooth</string>
+    <string name="bluetooth_off">Turn off Bluetooth</string>
+    <string name="bluetooth_turning_on">Turning on...</string>
+    <string name="bluetooth_turning_off">Turning off...</string>
+</resources>

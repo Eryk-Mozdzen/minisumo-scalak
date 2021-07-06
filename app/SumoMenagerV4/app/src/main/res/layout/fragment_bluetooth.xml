@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/bluetooth_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bluetooth"
+        android:textAlignment="center"
+        android:textSize="30dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/bluetooth_button_on_off"
+        android:text="Turn on Bluetooth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:minWidth="200dp"/>
+
+    <Button
+        android:id="@+id/bluetooth_button_get_list"
+        android:text="Refresh List"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:minWidth="200dp"/>
+
+    <ListView
+        android:id="@+id/bluetooth_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:cacheColorHint="@color/colorPrimaryDark"
+        android:choiceMode="singleChoice" />
+
+</LinearLayout>
