@@ -4,7 +4,6 @@
 #define F_CPU 8000000UL
 
 #include <avr/io.h>
-#include <stdbool.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "src/pid.h"
@@ -25,7 +24,7 @@ enum tactics_state {
 };
 
 #define TACTICS_TARGET_POWER		255.0
-#define TACTICS_FOLLOW_TIME			100
+#define TACTICS_FOLLOW_TIME			20				// 100 for 10ms loop delay
 #define TACTICS_EXPLORE_POWER		50
 #define TACTICS_TIME_STEP			0.001
 
@@ -39,7 +38,7 @@ void set_tactics_state(enum tactics_state state) {
 	eeprom_write(ADDRESS_TACTICS_STATE, current_tactics_state);
 }
 
-void update_tactics_state(double dist_error, bool edge_output[]) {
+void update_tactics_state(double dist_error, uint8_t edge_output[]) {
 	switch(current_tactics_state) {
 		case TACTICS_STATE_BEGIN: {
 			set_tactics_state(TACTICS_STATE_FOLLOW);
@@ -61,7 +60,7 @@ void update_tactics_state(double dist_error, bool edge_output[]) {
 
 void main_program() {
 	double dist_error = ir38khz_get_error();
-	bool edge_output[] = {qtr1a_get_state(LEFT), qtr1a_get_state(RIGHT)};
+	uint8_t edge_output[] = {qtr1a_get_state(LEFT), qtr1a_get_state(RIGHT)};
 	
 	update_tactics_state(dist_error, edge_output);
 	
@@ -84,8 +83,8 @@ void main_program() {
 			int16_t powerR = 0;
 
 			if(edge_output[0]==0 && edge_output[1]==0) {}
-			if(edge_output[0]==0 && edge_output[1]==1) { last_enemy_direction = false; powerL -=150; }
-			if(edge_output[0]==1 && edge_output[1]==0) { last_enemy_direction = true;  powerR -=150; }
+			if(edge_output[0]==0 && edge_output[1]==1) { last_enemy_direction = 0; powerL -=150; }
+			if(edge_output[0]==1 && edge_output[1]==0) { last_enemy_direction = 1; powerR -=150; }
 			if(edge_output[0]==1 && edge_output[1]==1) {}
 
 			if(last_enemy_direction) powerL = 255;
@@ -100,16 +99,27 @@ void main_program() {
 			
 			drv8838_set_speeds(TACTICS_EXPLORE_POWER, TACTICS_EXPLORE_POWER);
 			
-			if(edge_output[0] || edge_output[1]) {
-				bool dir = edge_output[0];
+			if(qtr1a_get_state(LEFT) || qtr1a_get_state(RIGHT)) {
+				printf("Line detected! Start distance measurement\n");
+				
+				uint8_t dir = qtr1a_get_state(LEFT);
 				double distance = 0;
-				while(edge_output[0] && edge_output[1]) {
+				
+				while(!qtr1a_get_state(LEFT) || !qtr1a_get_state(RIGHT)) {
 					_delay_ms(TACTICS_TIME_STEP*1000);
-					distance +=(TACTICS_TIME_STEP*TACTICS_EXPLORE_POWER*POWER_SCALE*WHEEL_RADIUS);
+					
+					distance +=(TACTICS_TIME_STEP*TACTICS_EXPLORE_POWER*POWER_SCALE*WHEEL_RADIUS*2*M_PI);
+					
+					printf("Line detected! Measurement distance\n");
 				}
+				
 				drv8838_set_speeds(0, 0);
 				_delay_ms(100);
-				double phi = M_PI - atan2(distance, EDGE_SPACING);
+				
+				float phi = M_PI - atan2(distance, EDGE_SPACING);
+				
+				printf("Measured distance:\t%f\n", distance);
+				printf("Estimated angle:\t%f\n", phi*180.f/M_PI);
 				
 				drv8838_set_speeds(-TACTICS_EXPLORE_POWER, -TACTICS_EXPLORE_POWER);
 				_delay_ms(300);

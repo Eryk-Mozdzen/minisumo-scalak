@@ -25,7 +25,7 @@ void rgb_color_set_rgb(uint8_t, uint8_t, uint8_t);
 
 void rgb_color_set(rgb_color);
 
-rgb_color rgb_color_multiply(rgb_color, double);
+rgb_color rgb_color_multiply(rgb_color, float);
 
 void __attribute__((noinline)) led_strip_write();
 

@@ -43,17 +43,43 @@ void drv8838_set_speed(uint8_t index, int16_t speed) {
 	
 	switch(index) {
 		case RIGHT: {
-			OCR0A = fabs(drv8838_power[1]);
-			if(drv8838_power[1]!=0) {
-				if((drv8838_rotate[1]==FORWARD)==(drv8838_power[1]>0)) PORTD |= (1<<PIND7);
-				else PORTD &= ~(1<<PIND7);
-			}	break; }
+				/*OCR0A = fabs(drv8838_power[1]);
+				if(drv8838_power[1]!=0) {
+					if((drv8838_rotate[1]==FORWARD)==(drv8838_power[1]>0)) PORTD |= (1<<PIND7);
+					else PORTD &= ~(1<<PIND7);
+				}*/
+				
+				if(drv8838_rotate[1]==OFF) {
+					OCR0A = 0x00;
+					break;
+				}
+				
+				OCR0A = fabs(drv8838_power[1]);
+				if((drv8838_rotate[1]==FORWARD)==(drv8838_power[1]>0))
+					PORTD |= (1<<PIND7);
+				else
+					PORTD &= ~(1<<PIND7);
+				
+				} break; 
 		case LEFT: {
-			OCR1A = fabs(drv8838_power[0]);
-			if(drv8838_power[0]!=0) {
-				if((drv8838_rotate[0]==FORWARD)==(drv8838_power[0]>0)) PORTB |= (1<<PINB2);
-				else PORTB &= ~(1<<PINB2);
-			}	break; }
+				/*OCR1A = fabs(drv8838_power[0]);
+				if(drv8838_power[0]!=0) {
+					if((drv8838_rotate[0]==FORWARD)==(drv8838_power[0]>0)) PORTB |= (1<<PINB2);
+					else PORTB &= ~(1<<PINB2);
+				}*/
+				
+				if(drv8838_rotate[0]==OFF) {
+					OCR1A = 0x00;
+					break;
+				}
+				
+				OCR1A = fabs(drv8838_power[0]);
+				if((drv8838_rotate[0]==FORWARD)==(drv8838_power[0]>0))
+					PORTB |= (1<<PINB2);
+				else
+					PORTB &= ~(1<<PINB2);
+				
+			}	break;
 		default: break;
 	}
 }
@@ -77,7 +103,7 @@ uint8_t ir38khz_get_state_raw(uint8_t index) {
 	return 0;
 }
 
-bool ir38khz_get_state(uint8_t index) {
+uint8_t ir38khz_get_state(uint8_t index) {
 	int good = 0;
 	for(int i=0; i<10; i++)
 	good +=ir38khz_get_state_raw(index);
@@ -105,7 +131,7 @@ void qtr1a_initialize(uint8_t mode, uint16_t trigger_a) {
 	ADMUX |= (1<<REFS0);
 	ADCSRA |= (1<<ADEN);
 	
-	qtr1a_inv = true;
+	qtr1a_inv = 1;
 	qtr1a_trigger = trigger_a;
 	
 	qtr1a_set_mode(mode);
@@ -122,29 +148,36 @@ uint16_t qtr1a_get_state_raw(uint8_t index) {
 	return ADC;
 }
 
-bool qtr1a_get_state(uint8_t index) {
+uint8_t qtr1a_get_state(uint8_t index) {
 	int good = 0;
 	for(int i=0; i<5; i++)
-	good +=(qtr1a_inv==(qtr1a_get_state_raw(index)<qtr1a_trigger));
+		good +=(qtr1a_inv==(qtr1a_get_state_raw(index)<qtr1a_trigger));
 	return (good>=3);
 	//return (inv==(QTR1A::getStateRAW(index)<trigger));
 }
 
 void qtr1a_set_mode(uint8_t mode) {
 	switch(mode) {
-		case BLACK: {	qtr1a_inv = true;	break; }
-		case WHITE: {	qtr1a_inv = false;	break; }
+		case BLACK: {	qtr1a_inv = 1; } break;
+		case WHITE: {	qtr1a_inv = 0; } break;
 		case AUTO: {
 			uint8_t left = qtr1a_get_state(LEFT);
 			uint8_t right = qtr1a_get_state(RIGHT);
-			if(left==right) qtr1a_inv = !left;
-		break; }
-		default: { break; }
+			
+			if(left==right) {
+				qtr1a_inv = !left;
+			} else {
+				qtr1a_set_mode(BLACK);
+			}
+		} break;
+		default: {
+			qtr1a_set_mode(BLACK);
+		} break;
 	}
 }
 
 uint8_t qtr1a_get_horizon() {
-	return 2*qtr1a_get_state(LEFT) + qtr1a_get_state(RIGHT);
+	return ((qtr1a_get_state(LEFT)<<1) | qtr1a_get_state(RIGHT));
 }
 
 void switch_initialize() {
@@ -161,7 +194,7 @@ void button_initialize() {
 	PORTC |= (1<<PINC0);
 }
 
-bool button_get_state() {
+uint8_t button_get_state() {
 	return !(PINC & (1<<PINC0));
 }
 
@@ -189,8 +222,8 @@ uint8_t eeprom_read(uint8_t address) {
 	return EEDR;
 }
 
-void rotate(double phi, bool dir, int16_t speed) {
-	double S = phi*(WHEEL_SPACING/2) *2;
+void rotate(float phi, uint8_t dir, int16_t speed) {
+	double S = phi*(WHEEL_SPACING/2)*2;
 	double l = 2*M_PI*WHEEL_RADIUS;
 	double rounds = S/l;
 	double rotateTime = rounds/(speed*POWER_SCALE);
@@ -199,7 +232,7 @@ void rotate(double phi, bool dir, int16_t speed) {
 	else drv8838_set_speeds(-speed, speed);
 	
 	for(int i=0; i<rotateTime*100; i++)
-	_delay_ms(10);
+		_delay_ms(10);
 	
 	drv8838_set_speeds(0, 0);
 	_delay_ms(100);

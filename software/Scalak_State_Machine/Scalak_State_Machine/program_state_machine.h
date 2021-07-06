@@ -4,7 +4,6 @@
 #define F_CPU 8000000UL
 
 #include <avr/io.h>
-#include <stdbool.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "src/pid.h"
@@ -18,7 +17,7 @@
 #define RC5_COMMAND_START_STOP		0x07
 
 #define ADDRESS_PROGRAM_STATE		0x0A
-#define ADDRESS_DYHLO_IDENTIFIER	0x0B
+#define ADDRESS_DOHYO_IDENTIFIER	0x0B
 
 enum program_state {
 	PROGRAM_STATE_PROGRRAMING = 0x00,
@@ -30,7 +29,7 @@ enum program_state {
 
 uint8_t stop_command, start_command;
 enum program_state current_program_state;
-bool button_last_state;
+uint8_t button_last_state;
 
 void set_program_state(enum program_state state) {
 	current_program_state = state;
@@ -48,7 +47,7 @@ void set_program_state(enum program_state state) {
 void set_commands(uint8_t command) {
 	stop_command = command & 0xFE;
 	start_command = (command & 0xFE) + 1;
-	eeprom_write(ADDRESS_DYHLO_IDENTIFIER, stop_command);
+	eeprom_write(ADDRESS_DOHYO_IDENTIFIER, stop_command);
 }
 
 void update_program_state_rc5() {
