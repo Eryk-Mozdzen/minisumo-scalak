@@ -1,0 +1,6 @@
+Vector_lib	KEYWORD1
+
+Vector	LITERAL1
+size		KEYWORD2
+push_back	KEYWORD2
+clear		KEYWORD2

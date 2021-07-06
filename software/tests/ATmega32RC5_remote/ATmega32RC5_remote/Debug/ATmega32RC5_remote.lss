@@ -1,0 +1,751 @@
+
+ATmega32RC5_remote.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000003ca  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  0000043e  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          000000ab  00800060  00800060  0000043e  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  0000043e  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000470  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000108  00000000  00000000  000004ac  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   00001c6a  00000000  00000000  000005b4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000bfe  00000000  00000000  0000221e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   00000a5f  00000000  00000000  00002e1c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000278  00000000  00000000  0000387c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    00000821  00000000  00000000  00003af4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    0000115d  00000000  00000000  00004315  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 000000d8  00000000  00000000  00005472  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2b 00 	jmp	0x56	; 0x56 <__ctors_end>
+   4:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+   8:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+   c:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  10:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  14:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  18:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  1c:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  20:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  24:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  28:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  2c:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  30:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  34:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  38:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  3c:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  40:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  44:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  48:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  4c:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+  50:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__bad_interrupt>
+
+00000054 <__ctors_start>:
+  54:	e7 00       	.word	0x00e7	; ????
+
+00000056 <__ctors_end>:
+  56:	11 24       	eor	r1, r1
+  58:	1f be       	out	0x3f, r1	; 63
+  5a:	cf e5       	ldi	r28, 0x5F	; 95
+  5c:	d8 e0       	ldi	r29, 0x08	; 8
+  5e:	de bf       	out	0x3e, r29	; 62
+  60:	cd bf       	out	0x3d, r28	; 61
+
+00000062 <__do_copy_data>:
+  62:	10 e0       	ldi	r17, 0x00	; 0
+  64:	a0 e6       	ldi	r26, 0x60	; 96
+  66:	b0 e0       	ldi	r27, 0x00	; 0
+  68:	ea ec       	ldi	r30, 0xCA	; 202
+  6a:	f3 e0       	ldi	r31, 0x03	; 3
+  6c:	02 c0       	rjmp	.+4      	; 0x72 <__do_copy_data+0x10>
+  6e:	05 90       	lpm	r0, Z+
+  70:	0d 92       	st	X+, r0
+  72:	a0 36       	cpi	r26, 0x60	; 96
+  74:	b1 07       	cpc	r27, r17
+  76:	d9 f7       	brne	.-10     	; 0x6e <__do_copy_data+0xc>
+
+00000078 <__do_clear_bss>:
+  78:	21 e0       	ldi	r18, 0x01	; 1
+  7a:	a0 e6       	ldi	r26, 0x60	; 96
+  7c:	b0 e0       	ldi	r27, 0x00	; 0
+  7e:	01 c0       	rjmp	.+2      	; 0x82 <.do_clear_bss_start>
+
+00000080 <.do_clear_bss_loop>:
+  80:	1d 92       	st	X+, r1
+
+00000082 <.do_clear_bss_start>:
+  82:	ab 30       	cpi	r26, 0x0B	; 11
+  84:	b2 07       	cpc	r27, r18
+  86:	e1 f7       	brne	.-8      	; 0x80 <.do_clear_bss_loop>
+
+00000088 <__do_global_ctors>:
+  88:	10 e0       	ldi	r17, 0x00	; 0
+  8a:	cb e2       	ldi	r28, 0x2B	; 43
+  8c:	d0 e0       	ldi	r29, 0x00	; 0
+  8e:	04 c0       	rjmp	.+8      	; 0x98 <__do_global_ctors+0x10>
+  90:	21 97       	sbiw	r28, 0x01	; 1
+  92:	fe 01       	movw	r30, r28
+  94:	0e 94 dd 01 	call	0x3ba	; 0x3ba <__tablejump2__>
+  98:	ca 32       	cpi	r28, 0x2A	; 42
+  9a:	d1 07       	cpc	r29, r17
+  9c:	c9 f7       	brne	.-14     	; 0x90 <__do_global_ctors+0x8>
+  9e:	0e 94 55 00 	call	0xaa	; 0xaa <main>
+  a2:	0c 94 e3 01 	jmp	0x3c6	; 0x3c6 <_exit>
+
+000000a6 <__bad_interrupt>:
+  a6:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000000aa <main>:
+	Input(&DDRC, &PORTC, PINC4)
+};
+
+int main(void) {
+	
+	serial.begin(9600);
+  aa:	40 e8       	ldi	r20, 0x80	; 128
+  ac:	55 e2       	ldi	r21, 0x25	; 37
+  ae:	60 e0       	ldi	r22, 0x00	; 0
+  b0:	70 e0       	ldi	r23, 0x00	; 0
+  b2:	89 e8       	ldi	r24, 0x89	; 137
+  b4:	90 e0       	ldi	r25, 0x00	; 0
+  b6:	0e 94 72 01 	call	0x2e4	; 0x2e4 <_ZN6Stream5beginEm>
+	transmiter.initialize();
+  ba:	88 e8       	ldi	r24, 0x88	; 136
+  bc:	90 e0       	ldi	r25, 0x00	; 0
+  be:	0e 94 2d 01 	call	0x25a	; 0x25a <_ZN14TransmitterRC510initializeEv>
+			PORT = PORT_a;
+			PIN = PIN_a;
+		}
+		
+		void initialize() {
+			*DDR &= ~(1<<PIN);
+  c2:	e3 e8       	ldi	r30, 0x83	; 131
+  c4:	f0 e0       	ldi	r31, 0x00	; 0
+  c6:	a0 81       	ld	r26, Z
+  c8:	b1 81       	ldd	r27, Z+1	; 0x01
+  ca:	2c 91       	ld	r18, X
+  cc:	81 e0       	ldi	r24, 0x01	; 1
+  ce:	90 e0       	ldi	r25, 0x00	; 0
+  d0:	ac 01       	movw	r20, r24
+  d2:	04 80       	ldd	r0, Z+4	; 0x04
+  d4:	02 c0       	rjmp	.+4      	; 0xda <main+0x30>
+  d6:	44 0f       	add	r20, r20
+  d8:	55 1f       	adc	r21, r21
+  da:	0a 94       	dec	r0
+  dc:	e2 f7       	brpl	.-8      	; 0xd6 <main+0x2c>
+  de:	40 95       	com	r20
+  e0:	24 23       	and	r18, r20
+  e2:	2c 93       	st	X, r18
+			*PORT |= (1<<PIN);
+  e4:	a2 81       	ldd	r26, Z+2	; 0x02
+  e6:	b3 81       	ldd	r27, Z+3	; 0x03
+  e8:	4c 91       	ld	r20, X
+  ea:	9c 01       	movw	r18, r24
+  ec:	04 80       	ldd	r0, Z+4	; 0x04
+  ee:	02 c0       	rjmp	.+4      	; 0xf4 <main+0x4a>
+  f0:	22 0f       	add	r18, r18
+  f2:	33 1f       	adc	r19, r19
+  f4:	0a 94       	dec	r0
+  f6:	e2 f7       	brpl	.-8      	; 0xf0 <main+0x46>
+  f8:	24 2b       	or	r18, r20
+  fa:	2c 93       	st	X, r18
+			PORT = PORT_a;
+			PIN = PIN_a;
+		}
+		
+		void initialize() {
+			*DDR &= ~(1<<PIN);
+  fc:	ee e7       	ldi	r30, 0x7E	; 126
+  fe:	f0 e0       	ldi	r31, 0x00	; 0
+ 100:	a0 81       	ld	r26, Z
+ 102:	b1 81       	ldd	r27, Z+1	; 0x01
+ 104:	2c 91       	ld	r18, X
+ 106:	ac 01       	movw	r20, r24
+ 108:	04 80       	ldd	r0, Z+4	; 0x04
+ 10a:	02 c0       	rjmp	.+4      	; 0x110 <main+0x66>
+ 10c:	44 0f       	add	r20, r20
+ 10e:	55 1f       	adc	r21, r21
+ 110:	0a 94       	dec	r0
+ 112:	e2 f7       	brpl	.-8      	; 0x10c <main+0x62>
+ 114:	40 95       	com	r20
+ 116:	24 23       	and	r18, r20
+ 118:	2c 93       	st	X, r18
+			*PORT |= (1<<PIN);
+ 11a:	a2 81       	ldd	r26, Z+2	; 0x02
+ 11c:	b3 81       	ldd	r27, Z+3	; 0x03
+ 11e:	4c 91       	ld	r20, X
+ 120:	9c 01       	movw	r18, r24
+ 122:	04 80       	ldd	r0, Z+4	; 0x04
+ 124:	02 c0       	rjmp	.+4      	; 0x12a <main+0x80>
+ 126:	22 0f       	add	r18, r18
+ 128:	33 1f       	adc	r19, r19
+ 12a:	0a 94       	dec	r0
+ 12c:	e2 f7       	brpl	.-8      	; 0x126 <main+0x7c>
+ 12e:	24 2b       	or	r18, r20
+ 130:	2c 93       	st	X, r18
+			PORT = PORT_a;
+			PIN = PIN_a;
+		}
+		
+		void initialize() {
+			*DDR &= ~(1<<PIN);
+ 132:	e9 e7       	ldi	r30, 0x79	; 121
+ 134:	f0 e0       	ldi	r31, 0x00	; 0
+ 136:	a0 81       	ld	r26, Z
+ 138:	b1 81       	ldd	r27, Z+1	; 0x01
+ 13a:	2c 91       	ld	r18, X
+ 13c:	ac 01       	movw	r20, r24
+ 13e:	04 80       	ldd	r0, Z+4	; 0x04
+ 140:	02 c0       	rjmp	.+4      	; 0x146 <main+0x9c>
+ 142:	44 0f       	add	r20, r20
+ 144:	55 1f       	adc	r21, r21
+ 146:	0a 94       	dec	r0
+ 148:	e2 f7       	brpl	.-8      	; 0x142 <main+0x98>
+ 14a:	40 95       	com	r20
+ 14c:	24 23       	and	r18, r20
+ 14e:	2c 93       	st	X, r18
+			*PORT |= (1<<PIN);
+ 150:	a2 81       	ldd	r26, Z+2	; 0x02
+ 152:	b3 81       	ldd	r27, Z+3	; 0x03
+ 154:	2c 91       	ld	r18, X
+ 156:	04 80       	ldd	r0, Z+4	; 0x04
+ 158:	02 c0       	rjmp	.+4      	; 0x15e <main+0xb4>
+ 15a:	88 0f       	add	r24, r24
+ 15c:	99 1f       	adc	r25, r25
+ 15e:	0a 94       	dec	r0
+ 160:	e2 f7       	brpl	.-8      	; 0x15a <main+0xb0>
+ 162:	82 2b       	or	r24, r18
+ 164:	8c 93       	st	X, r24
+ 166:	e0 e6       	ldi	r30, 0x60	; 96
+ 168:	f0 e0       	ldi	r31, 0x00	; 0
+ 16a:	69 e7       	ldi	r22, 0x79	; 121
+ 16c:	70 e0       	ldi	r23, 0x00	; 0
+			PORT = PORT_a;
+			PIN = PIN_a;
+		}
+		
+		void initialize() {
+			*DDR &= ~(1<<PIN);
+ 16e:	41 e0       	ldi	r20, 0x01	; 1
+ 170:	50 e0       	ldi	r21, 0x00	; 0
+ 172:	a0 81       	ld	r26, Z
+ 174:	b1 81       	ldd	r27, Z+1	; 0x01
+ 176:	8c 91       	ld	r24, X
+ 178:	9a 01       	movw	r18, r20
+ 17a:	04 80       	ldd	r0, Z+4	; 0x04
+ 17c:	02 c0       	rjmp	.+4      	; 0x182 <main+0xd8>
+ 17e:	22 0f       	add	r18, r18
+ 180:	33 1f       	adc	r19, r19
+ 182:	0a 94       	dec	r0
+ 184:	e2 f7       	brpl	.-8      	; 0x17e <main+0xd4>
+ 186:	20 95       	com	r18
+ 188:	82 23       	and	r24, r18
+ 18a:	8c 93       	st	X, r24
+			*PORT |= (1<<PIN);
+ 18c:	a2 81       	ldd	r26, Z+2	; 0x02
+ 18e:	b3 81       	ldd	r27, Z+3	; 0x03
+ 190:	2c 91       	ld	r18, X
+ 192:	ca 01       	movw	r24, r20
+ 194:	04 80       	ldd	r0, Z+4	; 0x04
+ 196:	02 c0       	rjmp	.+4      	; 0x19c <main+0xf2>
+ 198:	88 0f       	add	r24, r24
+ 19a:	99 1f       	adc	r25, r25
+ 19c:	0a 94       	dec	r0
+ 19e:	e2 f7       	brpl	.-8      	; 0x198 <main+0xee>
+ 1a0:	82 2b       	or	r24, r18
+ 1a2:	8c 93       	st	X, r24
+ 1a4:	35 96       	adiw	r30, 0x05	; 5
+	serial.begin(9600);
+	transmiter.initialize();
+	stopButton.initialize();
+	startButton.initialize();
+	programButton.initialize();
+	for(int i=0; i<5; i++)
+ 1a6:	e6 17       	cp	r30, r22
+ 1a8:	f7 07       	cpc	r31, r23
+ 1aa:	19 f7       	brne	.-58     	; 0x172 <main+0xc8>
+		addressSwitch[i].initialize();
+	
+    while(true) {
+		
+		transmiter.send(0, 0x0B, 0);
+ 1ac:	20 e0       	ldi	r18, 0x00	; 0
+ 1ae:	4b e0       	ldi	r20, 0x0B	; 11
+ 1b0:	60 e0       	ldi	r22, 0x00	; 0
+ 1b2:	88 e8       	ldi	r24, 0x88	; 136
+ 1b4:	90 e0       	ldi	r25, 0x00	; 0
+ 1b6:	0e 94 31 01 	call	0x262	; 0x262 <_ZN14TransmitterRC54sendEhhh>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 1ba:	2f ef       	ldi	r18, 0xFF	; 255
+ 1bc:	83 ed       	ldi	r24, 0xD3	; 211
+ 1be:	90 e3       	ldi	r25, 0x30	; 48
+ 1c0:	21 50       	subi	r18, 0x01	; 1
+ 1c2:	80 40       	sbci	r24, 0x00	; 0
+ 1c4:	90 40       	sbci	r25, 0x00	; 0
+ 1c6:	e1 f7       	brne	.-8      	; 0x1c0 <main+0x116>
+ 1c8:	00 c0       	rjmp	.+0      	; 0x1ca <main+0x120>
+ 1ca:	00 00       	nop
+ 1cc:	ef cf       	rjmp	.-34     	; 0x1ac <main+0x102>
+
+000001ce <_GLOBAL__sub_I_serial>:
+		volatile unsigned char *DDR;
+		volatile unsigned char *PORT;
+		unsigned char PIN;
+};
+
+Stream serial;
+ 1ce:	89 e8       	ldi	r24, 0x89	; 137
+ 1d0:	90 e0       	ldi	r25, 0x00	; 0
+ 1d2:	0e 94 71 01 	call	0x2e2	; 0x2e2 <_ZN6StreamC1Ev>
+TransmitterRC5 transmiter;
+ 1d6:	88 e8       	ldi	r24, 0x88	; 136
+ 1d8:	90 e0       	ldi	r25, 0x00	; 0
+ 1da:	0e 94 2c 01 	call	0x258	; 0x258 <_ZN14TransmitterRC5C1Ev>
+	public:
+		
+		Input() {}
+		
+		Input(volatile unsigned char *DDR_a, volatile unsigned char *PORT_a, unsigned char PIN_a) {
+			DDR = DDR_a;
+ 1de:	e3 e8       	ldi	r30, 0x83	; 131
+ 1e0:	f0 e0       	ldi	r31, 0x00	; 0
+ 1e2:	2a e3       	ldi	r18, 0x3A	; 58
+ 1e4:	30 e0       	ldi	r19, 0x00	; 0
+ 1e6:	31 83       	std	Z+1, r19	; 0x01
+ 1e8:	20 83       	st	Z, r18
+			PORT = PORT_a;
+ 1ea:	8b e3       	ldi	r24, 0x3B	; 59
+ 1ec:	90 e0       	ldi	r25, 0x00	; 0
+ 1ee:	93 83       	std	Z+3, r25	; 0x03
+ 1f0:	82 83       	std	Z+2, r24	; 0x02
+			PIN = PIN_a;
+ 1f2:	14 82       	std	Z+4, r1	; 0x04
+	public:
+		
+		Input() {}
+		
+		Input(volatile unsigned char *DDR_a, volatile unsigned char *PORT_a, unsigned char PIN_a) {
+			DDR = DDR_a;
+ 1f4:	ee e7       	ldi	r30, 0x7E	; 126
+ 1f6:	f0 e0       	ldi	r31, 0x00	; 0
+ 1f8:	31 83       	std	Z+1, r19	; 0x01
+ 1fa:	20 83       	st	Z, r18
+			PORT = PORT_a;
+ 1fc:	93 83       	std	Z+3, r25	; 0x03
+ 1fe:	82 83       	std	Z+2, r24	; 0x02
+			PIN = PIN_a;
+ 200:	51 e0       	ldi	r21, 0x01	; 1
+ 202:	54 83       	std	Z+4, r21	; 0x04
+	public:
+		
+		Input() {}
+		
+		Input(volatile unsigned char *DDR_a, volatile unsigned char *PORT_a, unsigned char PIN_a) {
+			DDR = DDR_a;
+ 204:	e9 e7       	ldi	r30, 0x79	; 121
+ 206:	f0 e0       	ldi	r31, 0x00	; 0
+ 208:	31 83       	std	Z+1, r19	; 0x01
+ 20a:	20 83       	st	Z, r18
+			PORT = PORT_a;
+ 20c:	93 83       	std	Z+3, r25	; 0x03
+ 20e:	82 83       	std	Z+2, r24	; 0x02
+			PIN = PIN_a;
+ 210:	42 e0       	ldi	r20, 0x02	; 2
+ 212:	44 83       	std	Z+4, r20	; 0x04
+	public:
+		
+		Input() {}
+		
+		Input(volatile unsigned char *DDR_a, volatile unsigned char *PORT_a, unsigned char PIN_a) {
+			DDR = DDR_a;
+ 214:	e0 e6       	ldi	r30, 0x60	; 96
+ 216:	f0 e0       	ldi	r31, 0x00	; 0
+ 218:	24 e3       	ldi	r18, 0x34	; 52
+ 21a:	30 e0       	ldi	r19, 0x00	; 0
+ 21c:	31 83       	std	Z+1, r19	; 0x01
+ 21e:	20 83       	st	Z, r18
+			PORT = PORT_a;
+ 220:	85 e3       	ldi	r24, 0x35	; 53
+ 222:	90 e0       	ldi	r25, 0x00	; 0
+ 224:	93 83       	std	Z+3, r25	; 0x03
+ 226:	82 83       	std	Z+2, r24	; 0x02
+			PIN = PIN_a;
+ 228:	14 82       	std	Z+4, r1	; 0x04
+	public:
+		
+		Input() {}
+		
+		Input(volatile unsigned char *DDR_a, volatile unsigned char *PORT_a, unsigned char PIN_a) {
+			DDR = DDR_a;
+ 22a:	36 83       	std	Z+6, r19	; 0x06
+ 22c:	25 83       	std	Z+5, r18	; 0x05
+			PORT = PORT_a;
+ 22e:	90 87       	std	Z+8, r25	; 0x08
+ 230:	87 83       	std	Z+7, r24	; 0x07
+			PIN = PIN_a;
+ 232:	51 87       	std	Z+9, r21	; 0x09
+	public:
+		
+		Input() {}
+		
+		Input(volatile unsigned char *DDR_a, volatile unsigned char *PORT_a, unsigned char PIN_a) {
+			DDR = DDR_a;
+ 234:	33 87       	std	Z+11, r19	; 0x0b
+ 236:	22 87       	std	Z+10, r18	; 0x0a
+			PORT = PORT_a;
+ 238:	95 87       	std	Z+13, r25	; 0x0d
+ 23a:	84 87       	std	Z+12, r24	; 0x0c
+			PIN = PIN_a;
+ 23c:	46 87       	std	Z+14, r20	; 0x0e
+	public:
+		
+		Input() {}
+		
+		Input(volatile unsigned char *DDR_a, volatile unsigned char *PORT_a, unsigned char PIN_a) {
+			DDR = DDR_a;
+ 23e:	30 8b       	std	Z+16, r19	; 0x10
+ 240:	27 87       	std	Z+15, r18	; 0x0f
+			PORT = PORT_a;
+ 242:	92 8b       	std	Z+18, r25	; 0x12
+ 244:	81 8b       	std	Z+17, r24	; 0x11
+			PIN = PIN_a;
+ 246:	43 e0       	ldi	r20, 0x03	; 3
+ 248:	43 8b       	std	Z+19, r20	; 0x13
+	public:
+		
+		Input() {}
+		
+		Input(volatile unsigned char *DDR_a, volatile unsigned char *PORT_a, unsigned char PIN_a) {
+			DDR = DDR_a;
+ 24a:	35 8b       	std	Z+21, r19	; 0x15
+ 24c:	24 8b       	std	Z+20, r18	; 0x14
+			PORT = PORT_a;
+ 24e:	97 8b       	std	Z+23, r25	; 0x17
+ 250:	86 8b       	std	Z+22, r24	; 0x16
+			PIN = PIN_a;
+ 252:	84 e0       	ldi	r24, 0x04	; 4
+ 254:	80 8f       	std	Z+24, r24	; 0x18
+ 256:	08 95       	ret
+
+00000258 <_ZN14TransmitterRC5C1Ev>:
+#include "RC5.h"
+
+TransmitterRC5::TransmitterRC5() {}
+ 258:	08 95       	ret
+
+0000025a <_ZN14TransmitterRC510initializeEv>:
+	/*DDRD |= (1<<PIND5);
+	OCR1A = 209;
+	TCCR1B |= (1<<WGM12);
+	TCNT1 = 0;*/
+	
+	DDRD |= (1<<PIND7);
+ 25a:	8f 9a       	sbi	0x11, 7	; 17
+	OCR2 = 210;
+ 25c:	82 ed       	ldi	r24, 0xD2	; 210
+ 25e:	83 bd       	out	0x23, r24	; 35
+ 260:	08 95       	ret
+
+00000262 <_ZN14TransmitterRC54sendEhhh>:
+	uint16_t message = 0;
+	
+	message |= (1<<13) | (1<<12);
+	message |= (toggle<<11);
+	message |= (address<<6);
+	message |= (command);
+ 262:	80 e4       	ldi	r24, 0x40	; 64
+ 264:	48 9f       	mul	r20, r24
+ 266:	a0 01       	movw	r20, r0
+ 268:	11 24       	eor	r1, r1
+ 26a:	30 e0       	ldi	r19, 0x00	; 0
+ 26c:	30 63       	ori	r19, 0x30	; 48
+ 26e:	42 2b       	or	r20, r18
+ 270:	53 2b       	or	r21, r19
+ 272:	70 e0       	ldi	r23, 0x00	; 0
+ 274:	76 2f       	mov	r23, r22
+ 276:	66 27       	eor	r22, r22
+ 278:	77 0f       	add	r23, r23
+ 27a:	77 0f       	add	r23, r23
+ 27c:	77 0f       	add	r23, r23
+ 27e:	46 2b       	or	r20, r22
+ 280:	57 2b       	or	r21, r23
+	/*for(int i=13; i>=0; i--) {
+		if(message & (1<<i)) sendOne();
+		else sendZero();
+	}*/
+	
+	for(int i=13; i>=0; i--) {
+ 282:	8d e0       	ldi	r24, 0x0D	; 13
+ 284:	90 e0       	ldi	r25, 0x00	; 0
+		if(message & (1<<i)) {
+ 286:	61 e0       	ldi	r22, 0x01	; 1
+ 288:	70 e0       	ldi	r23, 0x00	; 0
+			TCCR2= (1<<FOC2)|(1<<COM21)|(1<<CS20);
+			_delay_ms(0.89);
+			TCCR2= (1<<FOC2)|(1<<WGM21)|(1<<COM20)|(1<<CS20);
+			_delay_ms(0.89);
+		} else {
+			TCCR2= (1<<FOC2)|(1<<WGM21)|(1<<COM20)|(1<<CS20);
+ 28a:	f9 e9       	ldi	r31, 0x99	; 153
+			_delay_ms(0.89);
+			TCCR2= (1<<FOC2)|(1<<COM21)|(1<<CS20);
+ 28c:	e1 ea       	ldi	r30, 0xA1	; 161
+		if(message & (1<<i)) sendOne();
+		else sendZero();
+	}*/
+	
+	for(int i=13; i>=0; i--) {
+		if(message & (1<<i)) {
+ 28e:	9b 01       	movw	r18, r22
+ 290:	08 2e       	mov	r0, r24
+ 292:	02 c0       	rjmp	.+4      	; 0x298 <_ZN14TransmitterRC54sendEhhh+0x36>
+ 294:	22 0f       	add	r18, r18
+ 296:	33 1f       	adc	r19, r19
+ 298:	0a 94       	dec	r0
+ 29a:	e2 f7       	brpl	.-8      	; 0x294 <_ZN14TransmitterRC54sendEhhh+0x32>
+ 29c:	24 23       	and	r18, r20
+ 29e:	35 23       	and	r19, r21
+ 2a0:	23 2b       	or	r18, r19
+ 2a2:	69 f0       	breq	.+26     	; 0x2be <_ZN14TransmitterRC54sendEhhh+0x5c>
+			TCCR2= (1<<FOC2)|(1<<COM21)|(1<<CS20);
+ 2a4:	e5 bd       	out	0x25, r30	; 37
+ 2a6:	ae ed       	ldi	r26, 0xDE	; 222
+ 2a8:	b0 e0       	ldi	r27, 0x00	; 0
+ 2aa:	11 97       	sbiw	r26, 0x01	; 1
+ 2ac:	f1 f7       	brne	.-4      	; 0x2aa <_ZN14TransmitterRC54sendEhhh+0x48>
+ 2ae:	00 00       	nop
+			_delay_ms(0.89);
+			TCCR2= (1<<FOC2)|(1<<WGM21)|(1<<COM20)|(1<<CS20);
+ 2b0:	f5 bd       	out	0x25, r31	; 37
+ 2b2:	ae ed       	ldi	r26, 0xDE	; 222
+ 2b4:	b0 e0       	ldi	r27, 0x00	; 0
+ 2b6:	11 97       	sbiw	r26, 0x01	; 1
+ 2b8:	f1 f7       	brne	.-4      	; 0x2b6 <_ZN14TransmitterRC54sendEhhh+0x54>
+ 2ba:	00 00       	nop
+ 2bc:	0c c0       	rjmp	.+24     	; 0x2d6 <_ZN14TransmitterRC54sendEhhh+0x74>
+			_delay_ms(0.89);
+		} else {
+			TCCR2= (1<<FOC2)|(1<<WGM21)|(1<<COM20)|(1<<CS20);
+ 2be:	f5 bd       	out	0x25, r31	; 37
+ 2c0:	ae ed       	ldi	r26, 0xDE	; 222
+ 2c2:	b0 e0       	ldi	r27, 0x00	; 0
+ 2c4:	11 97       	sbiw	r26, 0x01	; 1
+ 2c6:	f1 f7       	brne	.-4      	; 0x2c4 <_ZN14TransmitterRC54sendEhhh+0x62>
+ 2c8:	00 00       	nop
+			_delay_ms(0.89);
+			TCCR2= (1<<FOC2)|(1<<COM21)|(1<<CS20);
+ 2ca:	e5 bd       	out	0x25, r30	; 37
+ 2cc:	ae ed       	ldi	r26, 0xDE	; 222
+ 2ce:	b0 e0       	ldi	r27, 0x00	; 0
+ 2d0:	11 97       	sbiw	r26, 0x01	; 1
+ 2d2:	f1 f7       	brne	.-4      	; 0x2d0 <_ZN14TransmitterRC54sendEhhh+0x6e>
+ 2d4:	00 00       	nop
+	/*for(int i=13; i>=0; i--) {
+		if(message & (1<<i)) sendOne();
+		else sendZero();
+	}*/
+	
+	for(int i=13; i>=0; i--) {
+ 2d6:	01 97       	sbiw	r24, 0x01	; 1
+ 2d8:	d0 f6       	brcc	.-76     	; 0x28e <_ZN14TransmitterRC54sendEhhh+0x2c>
+			_delay_ms(0.89);
+			TCCR2= (1<<FOC2)|(1<<COM21)|(1<<CS20);
+			_delay_ms(0.89);
+		}
+	}
+	TCCR2= (1<<FOC2)|(1<<COM21)|(1<<CS20);
+ 2da:	81 ea       	ldi	r24, 0xA1	; 161
+ 2dc:	85 bd       	out	0x25, r24	; 37
+	TCCR2= 0;
+ 2de:	15 bc       	out	0x25, r1	; 37
+ 2e0:	08 95       	ret
+
+000002e2 <_ZN6StreamC1Ev>:
+#include <avr/io.h>
+#include <math.h>
+#include "UART.h"
+
+Stream::Stream() {}
+ 2e2:	08 95       	ret
+
+000002e4 <_ZN6Stream5beginEm>:
+
+void Stream::begin(unsigned long baudRate) {
+ 2e4:	cf 93       	push	r28
+ 2e6:	df 93       	push	r29
+ 2e8:	ec 01       	movw	r28, r24
+	//unsigned long baudRateValue = 103;
+	unsigned long baudRateValue = (16000000/(16*baudRate))-1;
+ 2ea:	db 01       	movw	r26, r22
+ 2ec:	ca 01       	movw	r24, r20
+ 2ee:	88 0f       	add	r24, r24
+ 2f0:	99 1f       	adc	r25, r25
+ 2f2:	aa 1f       	adc	r26, r26
+ 2f4:	bb 1f       	adc	r27, r27
+ 2f6:	88 0f       	add	r24, r24
+ 2f8:	99 1f       	adc	r25, r25
+ 2fa:	aa 1f       	adc	r26, r26
+ 2fc:	bb 1f       	adc	r27, r27
+ 2fe:	9c 01       	movw	r18, r24
+ 300:	ad 01       	movw	r20, r26
+ 302:	22 0f       	add	r18, r18
+ 304:	33 1f       	adc	r19, r19
+ 306:	44 1f       	adc	r20, r20
+ 308:	55 1f       	adc	r21, r21
+ 30a:	22 0f       	add	r18, r18
+ 30c:	33 1f       	adc	r19, r19
+ 30e:	44 1f       	adc	r20, r20
+ 310:	55 1f       	adc	r21, r21
+ 312:	60 e0       	ldi	r22, 0x00	; 0
+ 314:	74 e2       	ldi	r23, 0x24	; 36
+ 316:	84 ef       	ldi	r24, 0xF4	; 244
+ 318:	90 e0       	ldi	r25, 0x00	; 0
+ 31a:	0e 94 bb 01 	call	0x376	; 0x376 <__udivmodsi4>
+ 31e:	da 01       	movw	r26, r20
+ 320:	c9 01       	movw	r24, r18
+ 322:	01 97       	sbiw	r24, 0x01	; 1
+ 324:	a1 09       	sbc	r26, r1
+ 326:	b1 09       	sbc	r27, r1
+	UBRRL = baudRateValue;
+ 328:	89 b9       	out	0x09, r24	; 9
+	UBRRH = (baudRateValue>>8);
+ 32a:	89 2f       	mov	r24, r25
+ 32c:	9a 2f       	mov	r25, r26
+ 32e:	ab 2f       	mov	r26, r27
+ 330:	bb 27       	eor	r27, r27
+ 332:	80 bd       	out	0x20, r24	; 32
+	
+	UCSRA = 0x00;
+ 334:	1b b8       	out	0x0b, r1	; 11
+	UCSRB = (1<<TXEN)|(1<<RXEN);
+ 336:	88 e1       	ldi	r24, 0x18	; 24
+ 338:	8a b9       	out	0x0a, r24	; 10
+	UCSRC = (1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ0);
+ 33a:	86 e8       	ldi	r24, 0x86	; 134
+ 33c:	80 bd       	out	0x20, r24	; 32
+	
+	bufferLen = 0;
+ 33e:	fe 01       	movw	r30, r28
+ 340:	e0 58       	subi	r30, 0x80	; 128
+ 342:	ff 4f       	sbci	r31, 0xFF	; 255
+ 344:	11 82       	std	Z+1, r1	; 0x01
+ 346:	10 82       	st	Z, r1
+ 348:	de 01       	movw	r26, r28
+ 34a:	e0 54       	subi	r30, 0x40	; 64
+ 34c:	f1 09       	sbc	r31, r1
+	for(int i=0; i<64; i++)
+		buffer[i] = '#';
+ 34e:	83 e2       	ldi	r24, 0x23	; 35
+ 350:	8d 93       	st	X+, r24
+	UCSRA = 0x00;
+	UCSRB = (1<<TXEN)|(1<<RXEN);
+	UCSRC = (1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ0);
+	
+	bufferLen = 0;
+	for(int i=0; i<64; i++)
+ 352:	ae 17       	cp	r26, r30
+ 354:	bf 07       	cpc	r27, r31
+ 356:	e1 f7       	brne	.-8      	; 0x350 <_ZN6Stream5beginEm+0x6c>
+		buffer[i] = '#';
+	buffer[63] = '\0';
+ 358:	1f ae       	std	Y+63, r1	; 0x3f
+ 35a:	9e 01       	movw	r18, r28
+ 35c:	20 58       	subi	r18, 0x80	; 128
+ 35e:	3f 4f       	sbci	r19, 0xFF	; 255
+	
+	for(int i=0; i<64; i++)
+		str[i] = '#';
+ 360:	83 e2       	ldi	r24, 0x23	; 35
+ 362:	81 93       	st	Z+, r24
+	bufferLen = 0;
+	for(int i=0; i<64; i++)
+		buffer[i] = '#';
+	buffer[63] = '\0';
+	
+	for(int i=0; i<64; i++)
+ 364:	e2 17       	cp	r30, r18
+ 366:	f3 07       	cpc	r31, r19
+ 368:	e1 f7       	brne	.-8      	; 0x362 <_ZN6Stream5beginEm+0x7e>
+		str[i] = '#';
+	str[63] = '\0';
+ 36a:	c1 58       	subi	r28, 0x81	; 129
+ 36c:	df 4f       	sbci	r29, 0xFF	; 255
+ 36e:	18 82       	st	Y, r1
+}
+ 370:	df 91       	pop	r29
+ 372:	cf 91       	pop	r28
+ 374:	08 95       	ret
+
+00000376 <__udivmodsi4>:
+ 376:	a1 e2       	ldi	r26, 0x21	; 33
+ 378:	1a 2e       	mov	r1, r26
+ 37a:	aa 1b       	sub	r26, r26
+ 37c:	bb 1b       	sub	r27, r27
+ 37e:	fd 01       	movw	r30, r26
+ 380:	0d c0       	rjmp	.+26     	; 0x39c <__udivmodsi4_ep>
+
+00000382 <__udivmodsi4_loop>:
+ 382:	aa 1f       	adc	r26, r26
+ 384:	bb 1f       	adc	r27, r27
+ 386:	ee 1f       	adc	r30, r30
+ 388:	ff 1f       	adc	r31, r31
+ 38a:	a2 17       	cp	r26, r18
+ 38c:	b3 07       	cpc	r27, r19
+ 38e:	e4 07       	cpc	r30, r20
+ 390:	f5 07       	cpc	r31, r21
+ 392:	20 f0       	brcs	.+8      	; 0x39c <__udivmodsi4_ep>
+ 394:	a2 1b       	sub	r26, r18
+ 396:	b3 0b       	sbc	r27, r19
+ 398:	e4 0b       	sbc	r30, r20
+ 39a:	f5 0b       	sbc	r31, r21
+
+0000039c <__udivmodsi4_ep>:
+ 39c:	66 1f       	adc	r22, r22
+ 39e:	77 1f       	adc	r23, r23
+ 3a0:	88 1f       	adc	r24, r24
+ 3a2:	99 1f       	adc	r25, r25
+ 3a4:	1a 94       	dec	r1
+ 3a6:	69 f7       	brne	.-38     	; 0x382 <__udivmodsi4_loop>
+ 3a8:	60 95       	com	r22
+ 3aa:	70 95       	com	r23
+ 3ac:	80 95       	com	r24
+ 3ae:	90 95       	com	r25
+ 3b0:	9b 01       	movw	r18, r22
+ 3b2:	ac 01       	movw	r20, r24
+ 3b4:	bd 01       	movw	r22, r26
+ 3b6:	cf 01       	movw	r24, r30
+ 3b8:	08 95       	ret
+
+000003ba <__tablejump2__>:
+ 3ba:	ee 0f       	add	r30, r30
+ 3bc:	ff 1f       	adc	r31, r31
+ 3be:	05 90       	lpm	r0, Z+
+ 3c0:	f4 91       	lpm	r31, Z
+ 3c2:	e0 2d       	mov	r30, r0
+ 3c4:	09 94       	ijmp
+
+000003c6 <_exit>:
+ 3c6:	f8 94       	cli
+
+000003c8 <__stop_program>:
+ 3c8:	ff cf       	rjmp	.-2      	; 0x3c8 <__stop_program>
