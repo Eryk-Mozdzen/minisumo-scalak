@@ -1,0 +1,27 @@
+fout = freq/(prescaler*(max-min))
+
+T = 1s
+min = 0
+16000000/(prescaler*65535) = 1
+16 000 000 = prescaler*65535
+prescaler ~244
+prescaler = 256
+max-min = 62500
+min = 3035
+
+T = 1ms
+min = 0
+16000000/(prescaler*65535) = 1000
+16000 = prescaler*255
+prescaler ~62
+prescaler = 8
+max-min = 2000
+min = 65535 - 8000 = 57535
+ticT = 1ms/8000 = 
+
+tickT = 500ns
+min = 0
+prescaler = 4
+8000000/(4*255) = 7843
+fout = 2000000
+tout = 1/2000000 s = 500ns

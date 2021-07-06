@@ -1,0 +1,41 @@
+28.02.2019
+
+To Do List (8 dni do zawodów):
+
+	- testowe opony
+		* ilość									x	12.02
+		* mieszanie								x	12.02
+		* odlewanie								x	12.02
+		* wyjmowanie							x	14.02
+		* włąściwości jezdne					x	14.02
+
+	- ostateczny projekt CAD
+		* znajomość ostatecznej średnicy kół	x
+			# odpowiedź z forum					x	12.02
+			# potwierdzenie druku 3D			x	11.02
+		* ostateczne wymiary płyty i felg		x	12.02
+		* potwierdzenie wykonaia				x	14.02 / 28.02
+
+	- hardware
+		* dokupić czujniki linii				x	28.02
+
+	- ostateczny montaż wszystkiego
+		* otrzymanie części metalowych
+			# do ojca
+			# od wujka Karola
+		* otrzymanie form drukowantych
+		* odlewanie kół
+			# kupić dłuższe śruby				x	27.02
+		* montaż
+
+	- software
+		* skompletować hardware					x	28.02
+		* najlepiej skompletować wszystko
+		* ring do testów
+		
+	- bilety
+		* odpowiedź od organizatora
+		* decyzja
+			# dojazd
+			# powrót							x	28.02
+		* zakup

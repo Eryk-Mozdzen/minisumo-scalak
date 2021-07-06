@@ -1,0 +1,14 @@
+https://www.jsumo.com/wing-arduino-nano-robot-controller
+https://botland.com.pl/pl/sterowniki-silnikow-moduly/3164-l298n-dwukanalowy-sterownik-silnikow-modul-12v2a.html
+https://botland.com.pl/pl/sterowniki-silnikow-dc/2695-pololu-drv8838-jednokanalowy-sterownik-silnikow-11v17a.html
+
+https://www.jsumo.com/core-dc-motor-6v-750rpm
+https://botland.com.pl/pl/mocowania-silnikow/36-mocowania-do-micro-silnikow-pololu-czarne-2-szt.html
+https://botland.com.pl/pl/enkodery/4884-zestaw-enkoderow-magnetycznych-do-micro-silnikow-pololu-kompatybilne-z-hpcb-27-18v-2-szt.html
+https://botland.com.pl/pl/silniki-dc-micro-z-przekladnia/5093-silnik-pololu-hpcb-501-obustronny-wal.html
+
+https://www.jsumo.com/js40f-digital-distance-sensor-min-40-cm-range
+https://botland.com.pl/pl/cyfrowe-czujniki-odleglosci/7622-pololu-cyfrowy-czujnik-odleglosci-ir-38khz-60cm.html
+https://botland.com.pl/pl/cyfrowe-czujniki-odleglosci/5826-cyfrowy-czujnik-odleglosci-opb720b-30vz-z-przewodem-7v-76cm.html
+
+http://www.modelarnia24.pl/silikon-do-form-formierski/20-silikon-mm940-twardszy-025-kg-katalizator-13g.html

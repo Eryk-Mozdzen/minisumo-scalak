@@ -1,0 +1,116 @@
+StartModule::StartModule() {}
+
+StartModule::StartModule(int startPin_a,drv8838 motors_a,Buzzer beep_a, SG90 flag_a,Lights led_a) {
+	startPin = startPin_a;
+	motors = motors_a;
+	beep = beep_a;
+	flag = flag_a;
+	led = led_a;
+	active = true;
+	premium = true;
+}
+
+StartModule::StartModule(int startPin_a,drv8838 motors_a,Buzzer beep_a) {
+	startPin = startPin_a;
+	motors = motors_a;
+	beep = beep_a;
+	active = true;
+	premium = false;
+}
+
+void StartModule::initialize() {
+	pinMode(startPin,INPUT_PULLUP);
+}
+
+void StartModule::wait() {
+	int number = 0;
+	bool blink = true;
+	while(!digitalRead(startPin) && active) {
+		motors.stop();
+		beep.stop();
+		
+		if(premium) {
+			flag.set(UP);
+			led.set(0,0,0);
+			number++;
+			number %=1000;
+			if(number%50==0) blink = !blink;
+			if(blink) led.set(255,0,0);
+		}
+
+		delay(10);
+	}
+}
+
+void StartModule::set(int mode) {
+	if(mode==0) active = true;
+	if(mode==1) active = false;
+	if(mode==2) active = !digitalRead(startPin);
+}
+
+SG90::SG90() {}
+
+SG90::SG90(int pinL, int pinR) {
+	DOWNvalue[0] = 90;
+	UPvalue[0] = 180;
+	DOWNvalue[1] = 90;
+	UPvalue[1] = 0;
+	state[0] = UP;
+	state[1] = UP;
+	pin[0] = pinL;
+	pin[1] = pinR;
+}
+
+void SG90::initialize() {
+	for(int i=0; i<2; i++)
+		servos[i].attach(pin[i]);
+}
+
+void SG90::set(int stateL, int stateR) {
+	SG90::setState(LEFT,stateR);
+	SG90::setState(RIGHT,stateL);
+}
+
+void SG90::set(int state_a) {
+	SG90::setState(LEFT,state_a);
+	SG90::setState(RIGHT,state_a);
+}
+
+void SG90::setState(int index, int state_a) {
+	state[index] = state_a;
+	if(state[index]==UP) servos[index].write(UPvalue[index]);
+	if(state[index]==DOWN) servos[index].write(DOWNvalue[index]);
+}
+
+void SG90::print() {
+	for(int i=0; i<2; i++) {
+		if(state[i]==UP) Serial.print("UP");
+		if(state[i]==DOWN) Serial.print("DOWN");
+		Serial.print('\t');
+	}
+	Serial.print('\n');
+}
+
+Lights::Lights() {}
+
+Lights::Lights(int number_a, int pin_a) {
+	number = number_a;
+	pin = pin_a;
+	pixels = Adafruit_NeoPixel(number, pin, NEO_GRB + NEO_KHZ800);
+}
+
+void Lights::initialize() {
+	pixels.begin();
+}
+
+void Lights::set(int r,int g,int b) {
+	for(int i=0; i<number; i++)
+		pixels.setPixelColor(i, pixels.Color(r,g,b));
+		
+	pixels.show();
+}
+
+void Lights::set(int index,int r,int g,int b) {
+	pixels.setPixelColor(index, pixels.Color(r,g,b));
+	pixels.show();
+}

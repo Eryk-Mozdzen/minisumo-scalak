@@ -1,0 +1,48 @@
+class SG90 {
+	public:
+		SG90();
+		SG90(int,int);
+		void initialize();
+		void set(int,int);
+		void set(int);
+		void print();
+	private:
+		Servo servos[2];
+		int UPvalue[2];
+		int DOWNvalue[2];
+		int state[2];
+		int pin[2];
+
+		void setState(int,int);
+};
+
+class Lights {
+	public:
+		Lights();
+		Lights(int,int);
+		void initialize();
+		void set(int,int,int);
+		void set(int,int,int,int);
+	private:
+		int pin;
+    	int number;
+    	Adafruit_NeoPixel pixels;
+};
+
+class StartModule {
+	public:
+		StartModule();
+		StartModule(int,drv8838,Buzzer);
+		StartModule(int,drv8838,Buzzer,SG90,Lights);
+		void initialize();
+		void wait();
+		void set(int);
+	private:
+		int startPin;
+		bool active;
+		bool premium;
+		drv8838 motors;
+		Buzzer beep;
+		SG90 flag;
+		Lights led;
+};

@@ -1,0 +1,7 @@
+fout = fcpu/(2*prescaler*(1+ocr1a))
+38 000 = 8 000 000/(2*prescaler*(1+ocr1a))
+38 = 4 000/(prescaler*(1+ocr1a))
+38 000*(prescaler*(1+ocr1a)) = 8 000 000/2
+prescaler*(1+ocr1a) = 8 000 000/(2*38 000)
+1+ocr1a = 8 000 000/(2*38 000*prescaler)
+ocr1a = 8 000 000/(2*38 000*prescaler) - 1

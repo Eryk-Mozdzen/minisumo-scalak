@@ -1,0 +1,54 @@
+class Encoder {
+    public:
+        int pinA,pinB;
+        double position;
+        int lastA,lastB;
+
+        Encoder();
+        Encoder(int,int);
+        void refresh();
+        double getPos();
+};
+
+Encoder::Encoder() {}
+
+Encoder::Encoder(int a,int b) {
+    pinA = a;
+    pinB = b;
+    pinMode(pinA,INPUT);
+    pinMode(pinB,INPUT);
+    position = 0;
+    lastA = LOW;
+    lastB = LOW;
+}
+
+void Encoder::refresh() {
+    int a = digitalRead(pinA);
+    int b = digitalRead(pinB);
+    if(a==LOW && b==LOW) {
+        if(lastA==HIGH && b==LOW) position++;
+        if(lastA==LOW && b==HIGH) position--;
+    } else if(a==LOW && b==HIGH) {
+        if(lastA==LOW && lastB==LOW) position++;
+        if(lastA==HIGH && lastB==HIGH) position--;
+    } else if(a==HIGH && b==HIGH) {
+        if(lastA==LOW && lastB==HIGH) position++;
+        if(lastA==HIGH && lastB==LOW) position--;
+    } else if(a==HIGH && b==LOW) {
+        if(lastA==HIGH && lastB==HIGH) position++;
+        if(lastA==LOW && lastB==LOW) position--;
+    }
+//    if(a!=b && lastA!=lastB) position++;
+//    if(a==b && lastA==lastB) position--;
+    lastA = a;
+    lastB = b;
+}
+
+double Encoder::getPos() {
+    double fixed = position;
+    //fixed *=-1;
+    fixed /=12;
+    //fixed *=2;
+    fixed /=51.45;
+    return fixed;
+}
