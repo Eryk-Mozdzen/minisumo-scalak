@@ -16,7 +16,7 @@
 #define LED_STRIP_SIZE	1
 
 typedef struct rgb_color {
-	uint8_t g, r, b;
+	uint8_t r, g, b;
 } rgb_color;
 
 rgb_color rgb_color_array[LED_STRIP_SIZE];

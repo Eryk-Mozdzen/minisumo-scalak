@@ -19,19 +19,19 @@
 #define ADDRESS_PROGRAM_STATE		0x0A
 #define ADDRESS_DOHYO_IDENTIFIER	0x0B
 
-enum program_state {
-	PROGRAM_STATE_PROGRRAMING = 0x00,
-	PROGRAM_STATE_POWER_ON = 0x01,
-	PROGRAM_STATE_STARTED = 0x02,
-	PROGRAM_STATE_STOPPED_SAFE = 0x03,
-	PROGRAM_STATE_STOPPED = 0x04
-};
+typedef enum {
+	PROGRAM_STATE_PROGRRAMING = 0xF6,
+	PROGRAM_STATE_POWER_ON = 0xF0,
+	PROGRAM_STATE_STARTED = 0x5A,
+	PROGRAM_STATE_STOPPED_SAFE = 0x55,
+	PROGRAM_STATE_STOPPED = 0x50
+} program_state;
 
 uint8_t stop_command, start_command;
-enum program_state current_program_state;
+program_state current_program_state;
 uint8_t button_last_state;
 
-void set_program_state(enum program_state state) {
+void set_program_state(program_state state) {
 	current_program_state = state;
 	switch(current_program_state) {
 		case PROGRAM_STATE_PROGRRAMING:		eeprom_write(ADDRESS_PROGRAM_STATE, PROGRAM_STATE_POWER_ON);		break;

@@ -63,7 +63,7 @@ int main() {
 	set_program_state(eeprom_read(ADDRESS_PROGRAM_STATE));
 	set_tactics_state(eeprom_read(ADDRESS_TACTICS_STATE));
 	
-	drv8838_initialize(OFF, OFF);
+	//drv8838_set_direction(OFF, OFF);
 	
     while(1) {
 		update_program_state_rc5();
@@ -73,6 +73,7 @@ int main() {
 		switch(current_program_state) {
 			case PROGRAM_STATE_PROGRRAMING:	{
 					drv8838_set_speeds(0, 0);
+					
 					rgb_color_set_rgb(255, 165, 0);		_delay_ms(50);
 					rgb_color_set_rgb(0, 0, 0);			_delay_ms(50);
 					rgb_color_set_rgb(255, 165, 0);		_delay_ms(50);
@@ -82,13 +83,14 @@ int main() {
 					//rotate(M_PI/2, 0, TACTICS_EXPLORE_POWER);
 					//rotate(3*M_PI/4, 0, TACTICS_EXPLORE_POWER);
 					//rotate(M_PI, 0, TACTICS_EXPLORE_POWER);
-					
 				} break;
 			case PROGRAM_STATE_POWER_ON: {
 					drv8838_set_speeds(0, 0);
+					
 					rgb_color_set(rgb_color_multiply(color_function(color_counter, 0, 1000), 0.3));
 					color_counter +=5;
-					if(color_counter>1000) color_counter = 0;
+					if(color_counter>1000)
+						color_counter = 0;
 				} break;
 			case PROGRAM_STATE_STARTED:	{
 					rgb_color_set_rgb(0, 100, 0);
@@ -96,10 +98,11 @@ int main() {
 					//main program
 				
 					main_program();
-				
+					
 				} break;
 			case PROGRAM_STATE_STOPPED_SAFE: {
 					drv8838_set_speeds(0, 0);
+					
 					rgb_color_set_rgb(100, 0, 0);
 				} break;
 			case PROGRAM_STATE_STOPPED: {} break;
@@ -108,7 +111,7 @@ int main() {
 		
 		printf("\n");
 		
-		printf("Program: %u Tactics: %u\n", current_program_state, current_tactics_state);
+		printf("Program: 0x%02X\tTactics: 0x%02X\n", current_program_state, current_tactics_state);
 		
 		printf("Motors:\t\t%d\t%d\n", drv8838_get_speed(LEFT), drv8838_get_speed(RIGHT));
 		printf("Proximity:\t%u%u%u%u%u\n", ir38khz_get_state(0), ir38khz_get_state(1), ir38khz_get_state(2), ir38khz_get_state(3), ir38khz_get_state(4));

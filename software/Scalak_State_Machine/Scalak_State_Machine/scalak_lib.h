@@ -28,6 +28,7 @@ uint8_t qtr1a_inv;
 uint16_t qtr1a_trigger;
 
 void drv8838_initialize(uint8_t, uint8_t);
+void drv8838_set_direction(uint8_t, uint8_t);
 int16_t drv8838_get_speed(uint8_t);
 int16_t drv8838_fix(int16_t);
 void drv8838_set_speeds(int16_t, int16_t);

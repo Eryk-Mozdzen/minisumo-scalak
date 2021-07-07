@@ -3,8 +3,8 @@
 #include "scalak_lib.h"
 
 void drv8838_initialize(uint8_t flip1, uint8_t flip2) {
-	drv8838_rotate[0] = flip1;
-	drv8838_rotate[1] = flip2;
+	drv8838_set_direction(flip1, flip2);
+	
 	drv8838_power[0] = 0;
 	drv8838_power[1] = 0;
 	
@@ -18,6 +18,11 @@ void drv8838_initialize(uint8_t flip1, uint8_t flip2) {
 	TCCR1B |= (1<<CS10) | (1<<WGM12);
 	
 	drv8838_set_speeds(0, 0);
+}
+
+void drv8838_set_direction(uint8_t dir_left, uint8_t dir_right) {
+	drv8838_rotate[0] = dir_left;
+	drv8838_rotate[1] = dir_right;
 }
 
 void drv8838_set_speeds(int16_t speed1, int16_t speed2) {
