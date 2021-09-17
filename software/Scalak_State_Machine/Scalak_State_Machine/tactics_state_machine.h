@@ -122,6 +122,8 @@ void main_program() {
 			
 			drv8838_set_speeds(TACTICS_EXPLORE_POWER, TACTICS_EXPLORE_POWER);
 			
+			// TURNING PROCEDURE blocking state
+			
 			if(qtr1a_get_state(LEFT) || qtr1a_get_state(RIGHT)) {
 				printf("Line detected! Start distance measurement\n");
 				

@@ -96,7 +96,10 @@ void update_program_state_button() {
 	if(button_get_state() && !button_last_state) {
 		switch(current_program_state) {
 			case PROGRAM_STATE_POWER_ON: {
-				
+					
+					// START COUNTER blocking state
+					// 5s duration???
+					
 					int16_t time = 5000*(5.0/10.0);
 					int16_t cycle = 250;
 					
