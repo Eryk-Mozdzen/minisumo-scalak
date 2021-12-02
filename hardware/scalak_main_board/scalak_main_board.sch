@@ -4,7 +4,7 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title ""
+Title "Minisumo Scalak"
 Date ""
 Rev ""
 Comp ""
@@ -92,7 +92,6 @@ Wire Wire Line
 Connection ~ 4400 1000
 Wire Wire Line
 	4400 1000 4400 950 
-NoConn ~ 3800 1300
 $Comp
 L Connector_Generic:Conn_01x03 J2
 U 1 1 61387F1B
@@ -1037,4 +1036,5 @@ Wire Notes Line
 	10250 6450 10250 4450
 Wire Notes Line
 	10250 4450 6100 4450
+NoConn ~ 3800 1350
 $EndSCHEMATC
