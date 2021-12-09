@@ -109,14 +109,25 @@ int main() {
 			default: {} break;
 		}
 		
-		printf("\n");
+		// clear PuTTy terminal and set cursor to home position
+		printf("%c[2J%c[H", 27, 27);
 		
-		printf("Program: 0x%02X\tTactics: 0x%02X\n", current_program_state, current_tactics_state);
-		
+		printf("Program:\t0x%02X\nTactics:\t0x%02X\n", current_program_state, current_tactics_state);
 		printf("Motors:\t\t%d\t%d\n", drv8838_get_speed(LEFT), drv8838_get_speed(RIGHT));
 		printf("Proximity:\t%u%u%u%u%u\n", ir38khz_get_state(0), ir38khz_get_state(1), ir38khz_get_state(2), ir38khz_get_state(3), ir38khz_get_state(4));
 		printf("Line:\t\t%u%u\t%u\t%u\n", qtr1a_get_state(LEFT), qtr1a_get_state(RIGHT), qtr1a_get_state_raw(LEFT), qtr1a_get_state_raw(RIGHT));
-		//printf("Switch: %u\tButton: %u\n", switch_get_state(), button_get_state());
+		printf("Switch:\t%u\nButton:\t%u\n", switch_get_state(), button_get_state());
+		
+		/*char buffer[1024] = {0};
+		uint16_t pos = 0;
+		
+		pos +=sprintf(buffer + pos, "Program:\t0x%02X\nTactics:\t0x%02X\n", current_program_state, current_tactics_state);
+		pos +=sprintf(buffer + pos, "Motors:\t\t%d\t%d\n\n", drv8838_get_speed(LEFT), drv8838_get_speed(RIGHT));
+		pos +=sprintf(buffer + pos, "Proximity:\t%u%u%u%u%u\n", ir38khz_get_state(0), ir38khz_get_state(1), ir38khz_get_state(2), ir38khz_get_state(3), ir38khz_get_state(4));
+		pos +=sprintf(buffer + pos, "Line:\t\t%u%u\t%u\t%u\n", qtr1a_get_state(LEFT), qtr1a_get_state(RIGHT), qtr1a_get_state_raw(LEFT), qtr1a_get_state_raw(RIGHT));
+		pos +=sprintf(buffer + pos, "Switch:\t%u\nButton:\t%u\n", switch_get_state(), button_get_state());
+		
+		printf("%s", buffer);*/
 		
 		_delay_ms(50);
     }
