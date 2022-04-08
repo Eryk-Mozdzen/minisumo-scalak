@@ -26,8 +26,9 @@ typedef enum {
 #define TACTICS_FIGHT_POWER			255
 #define TACTICS_FOLLOW_POWER		128
 #define TACTICS_FOLLOW_TIME			20				// 100 for 10ms loop delay
-#define TACTICS_EXPLORE_POWER		64
+#define TACTICS_EXPLORE_POWER		25
 #define TACTICS_EXPLORE_TIME_STEP	0.01
+#define TACTICS_TURN_MAX_DIST		0.015
 
 tactics_state current_tactics_state;
 uint16_t enemy_follow_counter = 0;
@@ -130,7 +131,7 @@ void main_program() {
 				uint8_t dir = qtr1a_get_state(LEFT);
 				float distance = 0;
 				
-				while(!qtr1a_get_state(LEFT) || !qtr1a_get_state(RIGHT)) {
+				while((!qtr1a_get_state(LEFT) || !qtr1a_get_state(RIGHT)) && distance<TACTICS_TURN_MAX_DIST) {
 					_delay_ms(TACTICS_EXPLORE_TIME_STEP*1000);
 					
 					distance +=(TACTICS_EXPLORE_TIME_STEP*TACTICS_EXPLORE_POWER*POWER_SCALE*WHEEL_RADIUS*2*M_PI);
