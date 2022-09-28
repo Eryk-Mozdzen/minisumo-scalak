@@ -1,7 +1,7 @@
 #ifndef PID_H_
 #define PID_H_
 
-#include <avr/io.h>
+#include <stdint.h>
 
 #define PID_NUMBER	1
 

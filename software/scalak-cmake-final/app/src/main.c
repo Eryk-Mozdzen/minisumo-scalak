@@ -1,7 +1,6 @@
-#include <avr/io.h>
 #include <stdio.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
+
 #include "pid.h"
 #include "rc5.h"
 #include "uart.h"
@@ -85,9 +84,9 @@ int main() {
 			case PROGRAM_STATE_POWER_ON: {
 					drv8838_set_speeds(0, 0);
 					
-					rgb_color_set(rgb_color_multiply(color_function(color_counter, 0, 1000), 0.3));
-					color_counter +=10;
-					if(color_counter>1000)
+					rgb_color_set(rgb_color_multiply(color_function(color_counter, 0, 5000), 0.3));
+					color_counter +=1;
+					if(color_counter>5000)
 						color_counter = 0;
 				} break;
 			case PROGRAM_STATE_STARTED:	{
@@ -96,6 +95,8 @@ int main() {
 					//main program
 				
 					main_program();
+					
+					_delay_ms(50);
 					
 				} break;
 			case PROGRAM_STATE_STOPPED_SAFE: {
@@ -108,14 +109,12 @@ int main() {
 		}
 		
 		// clear PuTTy terminal and set cursor to home position
-		printf("%c[2J%c[H", 27, 27);
+		/*printf("%c[2J%c[H", 27, 27);
 		
 		printf("Program:\t0x%02X\n\rTactics:\t0x%02X\n\r", current_program_state, current_tactics_state);
 		printf("Motors:\t\t%d\t%d\n\r", drv8838_get_speed(LEFT), drv8838_get_speed(RIGHT));
 		printf("Proximity:\t%u%u%u%u%u\n\r", ir38khz_get_state(0), ir38khz_get_state(1), ir38khz_get_state(2), ir38khz_get_state(3), ir38khz_get_state(4));
 		printf("Line:\t\t%u%u\t%u\t%u\n\r", qtr1a_get_state(LEFT), qtr1a_get_state(RIGHT), qtr1a_get_state_raw(LEFT), qtr1a_get_state_raw(RIGHT));
-		printf("Switch:\t\t%u\n\rButton:\t\t%u\n\r", switch_get_state(), button_get_state());
-		
-		_delay_ms(50);
+		printf("Switch:\t\t%u\n\rButton:\t\t%u\n\r", switch_get_state(), button_get_state());*/
     }
 }

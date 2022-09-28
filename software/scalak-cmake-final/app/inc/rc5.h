@@ -1,10 +1,10 @@
 #ifndef RC5_H_
 #define RC5_H_
 
-#include <avr/io.h>
 #include <stdbool.h>
-#include <util/delay.h>
+#include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 #define SHORT_MIN	2*444
 #define SHORT_MAX	2*1333

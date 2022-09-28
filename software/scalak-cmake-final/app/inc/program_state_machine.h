@@ -1,9 +1,8 @@
 #ifndef PROGRAM_STATE_MACHINE_H_
 #define PROGRAM_STATE_MACHINE_H_
 
-#include <avr/io.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
+
 #include "pid.h"
 #include "rc5.h"
 #include "uart.h"

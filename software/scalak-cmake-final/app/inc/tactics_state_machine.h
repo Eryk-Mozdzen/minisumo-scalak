@@ -1,15 +1,13 @@
 #ifndef TACTICS_STATE_MACHINE_H_
 #define TACTICS_STATE_MACHINE_H_
 
-#include <avr/io.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
+
 #include "pid.h"
 #include "rc5.h"
 #include "uart.h"
 #include "ws2812b.h"
 #include "scalak_lib.h"
-#include "program_state_machine.h"
 
 #define ADDRESS_TACTICS_STATE		0x0C
 
@@ -39,9 +37,7 @@ void set_tactics_state(tactics_state state) {
 }
 
 void update_tactics_state(float dist_error, uint8_t edge_output[]) {
-	//set_tactics_state(TACTICS_STATE_EXPLORE);
-	//return;
-	
+
 	switch(current_tactics_state) {
 		case TACTICS_STATE_BEGIN: {
 			
@@ -104,11 +100,6 @@ void main_program() {
 			int16_t powerL = 0;
 			int16_t powerR = 0;
 
-			/*if(edge_output[0]==0 && edge_output[1]==0) {}
-			if(edge_output[0]==0 && edge_output[1]==1) { last_enemy_direction = 0; powerL -=150; }
-			if(edge_output[0]==1 && edge_output[1]==0) { last_enemy_direction = 1; powerR -=150; }
-			if(edge_output[0]==1 && edge_output[1]==1) {}*/
-
 			if(last_enemy_direction) powerL = TACTICS_FOLLOW_POWER;
 			else powerR = TACTICS_FOLLOW_POWER;
 
@@ -116,15 +107,13 @@ void main_program() {
 			drv8838_set_speeds(powerL, powerR);
 		} break;
 		case TACTICS_STATE_EXPLORE: {
-			//if(last_enemy_direction) drv8838_set_speeds(-50, 50);
-			//else drv8838_set_speeds(50, -50);
 			
 			drv8838_set_speeds(TACTICS_EXPLORE_POWER, TACTICS_EXPLORE_POWER);
 			
 			// TURNING PROCEDURE blocking state
 			
 			if(qtr1a_get_state(LEFT) || qtr1a_get_state(RIGHT)) {
-				printf("Line detected! Start distance measurement\n");
+				//printf("Line detected! Start distance measurement\n");
 				
 				uint8_t dir = qtr1a_get_state(LEFT);
 				float distance = 0;
@@ -134,7 +123,7 @@ void main_program() {
 					
 					distance +=(TACTICS_EXPLORE_TIME_STEP*TACTICS_EXPLORE_POWER*POWER_SCALE*WHEEL_RADIUS*2*M_PI);
 					
-					printf("Line detected! Measurement distance\n");
+					//printf("Line detected! Measurement distance\n");
 				}
 				
 				drv8838_set_speeds(0, 0);
@@ -142,8 +131,8 @@ void main_program() {
 				
 				float phi = M_PI - atan2(distance, EDGE_SPACING);
 				
-				printf("Measured distance:\t%f\n", distance);
-				printf("Estimated angle:\t%f\n", phi*180.f/M_PI);
+				//printf("Measured distance:\t%f\n", distance);
+				//printf("Estimated angle:\t%f\n", phi*180.f/M_PI);
 				
 				drv8838_set_speeds(-TACTICS_EXPLORE_POWER, -TACTICS_EXPLORE_POWER);
 				_delay_ms(300);

@@ -38,7 +38,6 @@ target_link_options(${TARGET} PRIVATE
 add_custom_command(
 	TARGET ${TARGET} POST_BUILD
 	COMMAND ${CMAKE_OBJCOPY} -O ihex ${TARGET} ${CMAKE_PROJECT_NAME}.hex
-	COMMAND ${CMAKE_OBJDUMP} -D -j .text -m avr5 ${TARGET} > ${CMAKE_PROJECT_NAME}.dump
 	COMMAND ${CMAKE_SIZE} ${TARGET}
 )
 

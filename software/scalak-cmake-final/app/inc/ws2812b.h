@@ -2,8 +2,8 @@
 #define WS2812B_H_
 
 #include <avr/io.h>
-#include <util/delay.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 #define LED_STRIP_PORT	PORTB
 #define LED_STRIP_DDR	DDRB
