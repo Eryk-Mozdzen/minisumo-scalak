@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 #define FSM_STATE_MAX_NUM		10
-#define FSM_TRANSITION_MAX_NUM	10
+#define FSM_TRANSITION_MAX_NUM	4
 
 typedef void (*__fsm_behavior_t)();
 typedef uint8_t (*__fsm_getter_t)();

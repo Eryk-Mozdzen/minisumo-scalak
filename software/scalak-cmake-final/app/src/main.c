@@ -8,6 +8,7 @@
 #include "ws2812b.h"
 #include "rc5.h"
 #include "uart.h"
+#include "periph.h"
 
 uint8_t led_state = 0;
 
@@ -24,6 +25,21 @@ void check_rc5() {
 	}
 }
 
+void debug() {
+	uint8_t line[2];
+	uint16_t line_raw[2];
+
+	line_get(line);
+	line_get_raw(line_raw);
+
+	printf("raw: %d %d state: %d %d\n\r", line_raw[0], line_raw[1], line[0], line[1]);
+
+	uint8_t sw = switch_get();
+	uint8_t butt = button_get();
+
+	printf("switch: %d\n\rbutton: %d\n\r", sw, butt);
+}
+
 ISR(TIMER0_OVF_vect) {
 	scheduler_tick();
 }
@@ -32,6 +48,7 @@ int main() {
 
 	uart_init(38400);
 	rc5_init();
+	periph_init();
 
 	// tick generation
 	// timer 0 overflow interrupt (33ms)
@@ -41,6 +58,7 @@ int main() {
 
 	scheduler_add_task(1, blink, 1000/33);
 	scheduler_add_task(2, check_rc5, 0);
+	scheduler_add_task(3, debug, 100/33);
 
 	scheduler_start();
 

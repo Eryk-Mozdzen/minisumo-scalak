@@ -14,6 +14,7 @@ add_executable(${TARGET}
 	"app/src/ws2812b.c"
 	"app/src/rc5.c"
 	"app/src/uart.c"
+	"app/src/periph.c"
 )
 
 target_include_directories(${TARGET} PRIVATE
@@ -33,7 +34,7 @@ target_compile_definitions(${TARGET} PRIVATE
 )
 
 target_link_options(${TARGET} PRIVATE
-	-Wl,--print-memory-usage
+	#-Wl,--print-memory-usage
 	-mmcu=atmega328p
 )
 
@@ -46,6 +47,7 @@ add_custom_command(
 	TARGET ${TARGET} POST_BUILD
 	COMMAND ${CMAKE_OBJCOPY} -O ihex ${TARGET} ${CMAKE_PROJECT_NAME}.hex
 	COMMAND ${CMAKE_OBJDUMP} -j .text -D ${TARGET} > ${CMAKE_PROJECT_NAME}.dump
+	COMMAND ${CMAKE_SIZE} ${TARGET}
 )
 
 add_custom_target(flash
