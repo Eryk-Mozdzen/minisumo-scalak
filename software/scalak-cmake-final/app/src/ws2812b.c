@@ -1,22 +1,12 @@
 #include "ws2812b.h"
 
-void rgb_color_set_rgb(uint8_t red, uint8_t green, uint8_t blue) {
-	for(uint8_t i=0; i<LED_STRIP_SIZE; i++)
-	rgb_color_array[i] = (rgb_color){.r = red,.g =  green,.b = blue};
-	led_strip_write();
-}
+typedef struct {
+	uint8_t r, g, b;
+} rgb_color_t;
 
-void rgb_color_set(rgb_color color) {
-	for(uint8_t i=0; i<LED_STRIP_SIZE; i++)
-		rgb_color_array[i] = color;
-	led_strip_write();
-}
+static rgb_color_t rgb_color_array[LED_STRIP_SIZE];
 
-rgb_color rgb_color_multiply(rgb_color color, float number) {
-	return (rgb_color){.r = color.r*number, .g = color.g*number, .b = color.b*number};
-}
-
-void __attribute__((noinline)) led_strip_write() {
+static void __attribute__((noinline)) led_strip_write() {
 	LED_STRIP_PORT &= ~(1<<LED_STRIP_PIN);
 	LED_STRIP_DDR |= (1<<LED_STRIP_PIN);
 	
@@ -75,4 +65,15 @@ void __attribute__((noinline)) led_strip_write() {
 	sei();          // Re-enable interrupts now that we are done.
 	
 	_delay_us(80);  // Send the reset signal.
+}
+
+void ws2812b_set(uint8_t red, uint8_t green, uint8_t blue) {
+
+	for(uint8_t i=0; i<LED_STRIP_SIZE; i++) {
+		rgb_color_array[i].r = red;
+		rgb_color_array[i].g = green;
+		rgb_color_array[i].b = blue;
+	}
+		
+	led_strip_write();
 }

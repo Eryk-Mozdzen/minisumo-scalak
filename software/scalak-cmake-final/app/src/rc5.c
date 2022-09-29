@@ -1,104 +1,149 @@
 #include "rc5.h"
 
-void decoder_rc5_initialize() {
-	DDRD &= ~(1<<PIND2);
-	PORTD |= (1<<PIND2);
-	EIMSK |= (1<<INT0);
+typedef enum {
+	RC5_STATE_START1,
+	RC5_STATE_MID1,
+	RC5_STATE_START0,
+	RC5_STATE_MID0,
+	RC5_STATE_RESET
+} rc5_state_t;
 
-	//change
-	EICRA |= (1<<ISC00);
-	EICRA &= ~(1<<ISC01);
+static volatile uint8_t state;
+static volatile uint16_t counter;
+static volatile uint8_t bits_ready;
+static volatile rc5_message_t message;
+static fsm_t fsm;
+
+static void emit1() {
+	message.frame |=(1<<(13 - bits_ready));
+	bits_ready++;
+}
+
+static void emit0() {
+	message.frame &=~(1<<(13 - bits_ready));
+	bits_ready++;
+}
+
+static void reset() {
+	message.frame = 0;
+	bits_ready = 0;
+}
+
+static uint8_t get_short_space() {
+
+	if(state) {
+		int16_t time = counter*RC5_TIME_PRESCALER;
+
+		if(time>=(RC5_TIME_SHORT - RC5_TIME_TOLERANCE) && time<=(RC5_TIME_SHORT + RC5_TIME_TOLERANCE))
+			return 1;
+	}
+
+	return 0;
+}
+
+static uint8_t get_short_pulse() {
+
+	if(!state) {
+		int16_t time = counter*RC5_TIME_PRESCALER;
+
+		if(time>=(RC5_TIME_SHORT - RC5_TIME_TOLERANCE) && time<=(RC5_TIME_SHORT + RC5_TIME_TOLERANCE))
+			return 1;
+	}
+
+	return 0;
+}
+
+static uint8_t get_long_space() {
+
+	if(state) {
+		int16_t time = counter*RC5_TIME_PRESCALER;
+
+		if(time>=(RC5_TIME_LONG - RC5_TIME_TOLERANCE) && time<=(RC5_TIME_LONG + RC5_TIME_TOLERANCE))
+			return 1;
+	}
+
+	return 0;
+}
+
+static uint8_t get_long_pulse() {
+
+	if(!state) {
+		int16_t time = counter*RC5_TIME_PRESCALER;
+
+		if(time>=(RC5_TIME_LONG - RC5_TIME_TOLERANCE) && time<=(RC5_TIME_LONG + RC5_TIME_TOLERANCE))
+			return 1;
+	}
+
+	return 0;
+}
+
+void rc5_init() {
+
+	fsm_init(&fsm);
+
+	// state definition
+	fsm_define_state(&fsm, RC5_STATE_START1,	NULL,	NULL, NULL);
+	fsm_define_state(&fsm, RC5_STATE_MID1,		emit1,	NULL, NULL);
+	fsm_define_state(&fsm, RC5_STATE_START0,	NULL,	NULL, NULL);
+	fsm_define_state(&fsm, RC5_STATE_MID0,		emit0,	NULL, NULL);
+	fsm_define_state(&fsm, RC5_STATE_RESET,		reset,	NULL, NULL);
+
+	// transition definition from RC5 graph and reset transition
+	fsm_define_transition(&fsm, RC5_STATE_START1,	RC5_STATE_MID1,		NULL, get_short_space);
+	fsm_define_transition(&fsm, RC5_STATE_MID1,		RC5_STATE_START1,	NULL, get_short_pulse);
+	fsm_define_transition(&fsm, RC5_STATE_MID1,		RC5_STATE_MID0,		NULL, get_long_pulse);
+	fsm_define_transition(&fsm, RC5_STATE_MID0,		RC5_STATE_MID1,		NULL, get_long_space);
+	fsm_define_transition(&fsm, RC5_STATE_MID0,		RC5_STATE_START0,	NULL, get_short_space);
+	fsm_define_transition(&fsm, RC5_STATE_START0,	RC5_STATE_MID0,		NULL, get_short_pulse);
+	fsm_define_transition(&fsm, RC5_STATE_RESET,	RC5_STATE_MID1,		NULL, NULL);
+
+	fsm_start(&fsm, RC5_STATE_RESET);
+
+	DDRD &=~(1<<DDD2);
+	PORTD |=(1<<PORTD2);
+
+	EIMSK |=(1<<INT0);
+	EICRA |=(1<<ISC00);
+	EICRA &=~(1<<ISC01);
 	
-	TCCR2B |= (1 << CS20);
-	TIMSK2 |= (1<<TOIE2);
+	TCCR2B |=(1<<CS22) | (1<<CS20);
+	TIMSK2 |=(1<<TOIE2);
 	
 	sei();
-	
-	decoder_rc5_reset();
 }
 
-void decoder_rc5_reset() {
-	decoder_rc5_isNew = false;
-	decoder_rc5_counter = 14;
-	decoder_rc5_message = 0;
-	decoder_rc5_delayFull = 0;
-	decoder_rc5_currentState = STATE_BEGIN;
-}
+uint8_t rc5_get_message(rc5_message_t *msg) {
+	if(bits_ready!=14)
+		return 0;
 
-void decoder_rc5_TIMER_ISR() {
-	decoder_rc5_delayFull++;
-}
+	*msg = message;
 
-void decoder_rc5_INT_ISR() {
-	uint16_t delay = ((TCNT2 + decoder_rc5_delayFull*256)>>2);
-	
-	/*
-	0 - short space
-	2 - short pulse
-	4 - long space
-	6 - long pulse
-	*/
-	
-	uint8_t event = (PIND & (1<<PIND2)) ? 2 : 0;
-	
-	if(delay>LONG_MIN && delay<LONG_MAX) event +=4;
-	else if(delay<SHORT_MIN || delay>SHORT_MAX) decoder_rc5_reset();
-	
-	if(decoder_rc5_currentState==STATE_BEGIN) {
-		decoder_rc5_counter--;
-		decoder_rc5_message |= (1<<decoder_rc5_counter);
-		decoder_rc5_currentState = STATE_MID1;
-		TCNT2 = 0;
-		return;
-	}
-	
-	const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
-	int newState = (trans[decoder_rc5_currentState]>>event) & 0x03;
+	fsm_start(&fsm, RC5_STATE_RESET);
 
-    if(newState==decoder_rc5_currentState || decoder_rc5_currentState>STATE_START0) {
-        decoder_rc5_reset();
-        return;
-    }
-    
-    decoder_rc5_currentState = newState;
-	
-	if(decoder_rc5_currentState==STATE_MID0) decoder_rc5_counter--;
-	else if(decoder_rc5_currentState==STATE_MID1) {
-		decoder_rc5_counter--;
-		decoder_rc5_message |= (1<<decoder_rc5_counter);
-	}
-	
-	if(decoder_rc5_counter==0 && (decoder_rc5_currentState==STATE_START1 || decoder_rc5_currentState==STATE_MID0)) {
-		decoder_rc5_currentState = STATE_END;
-		decoder_rc5_isNew = true;
-	}
-	
-	TCNT2 = 0;
-	decoder_rc5_delayFull = 0;
-}
-
-bool decoder_rc5_new_message() {
-	bool result = decoder_rc5_isNew;
-	decoder_rc5_isNew = false;
-	return result;
-}
-
-uint8_t decoder_rc5_get_toggle() {
-	return (uint8_t)((decoder_rc5_message & 0x0800)>>11);
-}
-
-uint8_t decoder_rc5_get_address() {
-	return (uint8_t)((decoder_rc5_message & 0x07C0)>>6);
-}
-
-uint8_t decoder_rc5_get_command() {
-	return (uint8_t)(decoder_rc5_message & 0x003F);
-}
-
-ISR(INT0_vect) {
-	decoder_rc5_INT_ISR();
+	return 1;
 }
 
 ISR(TIMER2_OVF_vect) {
-	decoder_rc5_TIMER_ISR();
+	TCCR2B &=~((1<<CS22) | (1<<CS20));
+
+	if(bits_ready==14)
+		return;
+
+	fsm_start(&fsm, RC5_STATE_RESET);
+}
+
+ISR(INT0_vect) {
+	if(bits_ready==14)
+		return;
+
+	state = !(PIND & (1<<PIND2));
+	counter = TCNT2;
+	
+	TCNT2 = 0;
+	TCCR2B |=(1<<CS22) | (1<<CS20);
+
+	fsm_update(&fsm);
+
+	if(bits_ready==2 && message.start!=3)
+		fsm_start(&fsm, RC5_STATE_RESET);
 }

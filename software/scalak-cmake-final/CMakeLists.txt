@@ -6,13 +6,14 @@ project(scalak-cmake-final)
 
 set(TARGET ${CMAKE_PROJECT_NAME}.elf)
 
+add_subdirectory(scheduler-c)
+add_subdirectory(state-machine-c)
+
 add_executable(${TARGET}
 	"app/src/main.c"
-	"app/src/pid.c"
-	"app/src/rc5.c"
-	"app/src/scalak_lib.c"
-	"app/src/uart.c"
 	"app/src/ws2812b.c"
+	"app/src/rc5.c"
+	"app/src/uart.c"
 )
 
 target_include_directories(${TARGET} PRIVATE
@@ -32,13 +33,19 @@ target_compile_definitions(${TARGET} PRIVATE
 )
 
 target_link_options(${TARGET} PRIVATE
+	-Wl,--print-memory-usage
 	-mmcu=atmega328p
+)
+
+target_link_libraries(${TARGET} PRIVATE
+	scheduler
+	fsm
 )
 
 add_custom_command(
 	TARGET ${TARGET} POST_BUILD
 	COMMAND ${CMAKE_OBJCOPY} -O ihex ${TARGET} ${CMAKE_PROJECT_NAME}.hex
-	COMMAND ${CMAKE_SIZE} ${TARGET}
+	COMMAND ${CMAKE_OBJDUMP} -j .text -D ${TARGET} > ${CMAKE_PROJECT_NAME}.dump
 )
 
 add_custom_target(flash
