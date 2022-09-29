@@ -15,6 +15,7 @@ add_executable(${TARGET}
 	"app/src/rc5.c"
 	"app/src/uart.c"
 	"app/src/periph.c"
+	"app/src/motors.c"
 )
 
 target_include_directories(${TARGET} PRIVATE

@@ -9,6 +9,7 @@
 #include "rc5.h"
 #include "uart.h"
 #include "periph.h"
+#include "motors.h"
 
 uint8_t led_state = 0;
 
@@ -34,10 +35,29 @@ void debug() {
 
 	printf("raw: %d %d state: %d %d\n\r", line_raw[0], line_raw[1], line[0], line[1]);
 
+	uint8_t prox[5];
+
+	prox_get(prox);
+
+	printf("prox: %d%d%d%d%d\n\r", prox[0], prox[1], prox[2], prox[3], prox[4]);
+
+	int16_t motors[2];
+
+	motors_get(motors);
+
+	printf("motors: %d %d\n\r", motors[0], motors[1]);
+
 	uint8_t sw = switch_get();
 	uint8_t butt = button_get();
 
 	printf("switch: %d\n\rbutton: %d\n\r", sw, butt);
+}
+
+uint8_t pwr;
+
+void motor_test() {
+	pwr++;
+	motors_set(pwr, pwr);
 }
 
 ISR(TIMER0_OVF_vect) {
@@ -49,9 +69,11 @@ int main() {
 	uart_init(38400);
 	rc5_init();
 	periph_init();
+	motors_init();
 
 	// tick generation
 	// timer 0 overflow interrupt (33ms)
+	// this scales down right motor PWM frequency 1024 times
 	TCCR0B = (1<<CS02) | (1<<CS00);
     TIMSK0 = (1<<TOIE0);
 	sei();
@@ -59,6 +81,7 @@ int main() {
 	scheduler_add_task(1, blink, 1000/33);
 	scheduler_add_task(2, check_rc5, 0);
 	scheduler_add_task(3, debug, 100/33);
+	scheduler_add_task(4, motor_test, 10/33);
 
 	scheduler_start();
 
