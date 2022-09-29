@@ -11,20 +11,7 @@
 #include "periph.h"
 #include "motors.h"
 
-uint8_t led_state = 0;
-
-void blink() {
-	ws2812b_set(0, 0, 255*led_state);
-	led_state = !led_state;
-}
-
-rc5_message_t message;
-
-void check_rc5() {
-	if(rc5_get_message(&message)) {
-		printf("toggle: 0x%02X address: 0x%02X command: 0x%02X\n\r", message.toggle, message.address, message.command);
-	}
-}
+#include "robot.h"
 
 void debug() {
 	uint8_t line[2];
@@ -53,13 +40,6 @@ void debug() {
 	printf("switch: %d\n\rbutton: %d\n\r", sw, butt);
 }
 
-uint8_t pwr;
-
-void motor_test() {
-	pwr++;
-	motors_set(pwr, pwr);
-}
-
 ISR(TIMER0_OVF_vect) {
 	scheduler_tick();
 }
@@ -78,10 +58,9 @@ int main() {
     TIMSK0 = (1<<TOIE0);
 	sei();
 
-	scheduler_add_task(1, blink, 1000/33);
-	scheduler_add_task(2, check_rc5, 0);
-	scheduler_add_task(3, debug, 100/33);
-	scheduler_add_task(4, motor_test, 10/33);
+	//scheduler_add_task(3, debug, 100/33);
+
+	robot_init();
 
 	scheduler_start();
 

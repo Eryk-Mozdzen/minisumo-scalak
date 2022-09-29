@@ -16,6 +16,7 @@ add_executable(${TARGET}
 	"app/src/uart.c"
 	"app/src/periph.c"
 	"app/src/motors.c"
+	"app/src/robot.c"
 )
 
 target_include_directories(${TARGET} PRIVATE
@@ -35,8 +36,9 @@ target_compile_definitions(${TARGET} PRIVATE
 )
 
 target_link_options(${TARGET} PRIVATE
-	#-Wl,--print-memory-usage
 	-mmcu=atmega328p
+	-Wl,-u,vfprintf
+	-lprintf_flt
 )
 
 target_link_libraries(${TARGET} PRIVATE
