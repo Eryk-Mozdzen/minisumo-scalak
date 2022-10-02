@@ -1,11 +1,11 @@
 #include "robot.h"
 
 typedef enum {
-	ROBOT_STATE_READY,
-	ROBOT_STATE_PROGRAM,
-	ROBOT_STATE_RUN,
-	ROBOT_STATE_STOP1,
-	ROBOT_STATE_STOP2
+	ROBOT_STATE_READY = 0xFF,	// eeprom reset value
+	ROBOT_STATE_PROGRAM = 0x10,
+	ROBOT_STATE_RUN = 0x20,
+	ROBOT_STATE_STOP1 = 0x30,
+	ROBOT_STATE_STOP2 = 0x40
 } robot_state_t;
 
 const uint8_t array[12][3] = {
@@ -23,70 +23,61 @@ const uint8_t array[12][3] = {
 	{127,   0, 255}
 };
 
-static rc5_message_t rc5_msg;
 static fsm_t fsm;
+static rc5_message_t rc5_msg;
 static int16_t ready_color_counter;
 
-static robot_state_t eeprom_state;
-static uint8_t eeprom_stop_cmd;
 static uint8_t eeprom_start_cmd;
+static uint8_t eeprom_stop_cmd;
 
-static struct {
-	uint8_t rc5_program_cmd : 1;
-	uint8_t rc5_start_cmd : 1;
-	uint8_t rc5_stop_cmd : 1;
-	uint8_t unused : 5;
-} flags;
+static uint8_t flag_program_cmd;
+static uint8_t flag_start_cmd;
+static uint8_t flag_stop_cmd;
 
 static void loop() {
 	if(rc5_get_message(&rc5_msg)) {
-		if(rc5_msg.address==0x0B) {
-			// programming command
-
-			flags.rc5_program_cmd = 1;
-
-			eeprom_stop_cmd = rc5_msg.command & 0xFE;
-			eeprom_start_cmd = (rc5_msg.command & 0xFE) + 1;
-
-			eeprom_write(ROBOT_EEPROM_ADDRESS_STOP, eeprom_stop_cmd);
-			eeprom_write(ROBOT_EEPROM_ADDRESS_START, eeprom_start_cmd);
+		if(rc5_msg.command==eeprom_start_cmd) {
+			// start command
+			flag_start_cmd = 1;
 
 		} else if(rc5_msg.command==eeprom_stop_cmd) {
 			// stop command
+			flag_stop_cmd = 1;
 
-			flags.rc5_stop_cmd = 1;
+		} else if(rc5_msg.address==0x0B) {
+			// programming command
+			flag_program_cmd = 1;
 
-		} else if(rc5_msg.command==eeprom_start_cmd) {
-			// start command
+			eeprom_start_cmd = (rc5_msg.command & 0xFE) + 1;
+			eeprom_stop_cmd = rc5_msg.command & 0xFE;
 
-			flags.rc5_start_cmd = 1;
-
+			eeprom_write(ROBOT_EEPROM_ADDRESS_START, eeprom_start_cmd);
+			eeprom_write(ROBOT_EEPROM_ADDRESS_STOP, eeprom_stop_cmd);
 		}
 	}
 
 	fsm_update(&fsm);
 	fsm_execute(&fsm);
 
-	flags.rc5_program_cmd = 0;
-	flags.rc5_stop_cmd = 0;
-	flags.rc5_start_cmd = 0;
+	flag_program_cmd = 0;
+	flag_start_cmd = 0;
+	flag_stop_cmd = 0;
 }
 
 static uint8_t get_program() {
-	return flags.rc5_program_cmd;
+	return flag_program_cmd;
 }
 
 static uint8_t get_start() {
-	return flags.rc5_start_cmd;
+	return flag_start_cmd;
 }
 
 static uint8_t get_stop() {
-	return flags.rc5_stop_cmd;
+	return flag_stop_cmd;
 }
 
 static void ready_enter() {
-	eeprom_state = ROBOT_STATE_READY;
-	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, eeprom_state);
+	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_READY);
 
 	motors_set(0, 0);
 }
@@ -125,21 +116,19 @@ static void program_enter() {
 static void run_enter() {
 	ws2812b_set(0, 255, 0);
 
-	eeprom_state = ROBOT_STATE_RUN;
-	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, eeprom_state);
+	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_RUN);
 
 	//fight_init();
 }
 
 static void run_execute() {
+	ws2812b_set(0, 255, 0);
+
 	//fight_update();
 }
 
 static void stop1_enter() {
-	ws2812b_set(0, 0, 0);
-
-	eeprom_state = ROBOT_STATE_STOP1;
-	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, eeprom_state);
+	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_STOP1);
 
 	motors_set(0, 0);
 
@@ -149,8 +138,7 @@ static void stop1_enter() {
 }
 
 static void stop2_enter() {
-	eeprom_state = ROBOT_STATE_READY;
-	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, eeprom_state);
+	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_READY);
 
 	motors_set(0, 0);
 
@@ -176,18 +164,8 @@ void robot_init() {
 
 	eeprom_start_cmd = eeprom_read(ROBOT_EEPROM_ADDRESS_START);
 	eeprom_stop_cmd = eeprom_read(ROBOT_EEPROM_ADDRESS_STOP);
-	eeprom_state = eeprom_read(ROBOT_EEPROM_ADDRESS_STATE);
 
-	switch(eeprom_state) {
-		case ROBOT_STATE_READY:
-		case ROBOT_STATE_PROGRAM:
-		case ROBOT_STATE_RUN:
-		case ROBOT_STATE_STOP1:
-		case ROBOT_STATE_STOP2: break;
-		default: eeprom_state = ROBOT_STATE_READY; break;
-	}
+	fsm_start(&fsm, eeprom_read(ROBOT_EEPROM_ADDRESS_STATE));
 
-	fsm_start(&fsm, eeprom_state);
-
-	scheduler_add_task(67, loop, 0);
+	scheduler_add_task(loop, 0);
 }

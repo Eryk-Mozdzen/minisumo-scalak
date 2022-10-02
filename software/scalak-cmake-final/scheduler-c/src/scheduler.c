@@ -7,7 +7,6 @@ typedef enum {
 } task_state_t;
 
 typedef struct {
-	uint8_t id;
 	uint16_t delay;
 	uint16_t period;
 	task_t task;
@@ -16,13 +15,12 @@ typedef struct {
 
 static tcb_t task_list[SCHEDULER_TASK_MAX_NUM];
 
-void scheduler_add_task(const uint8_t id, const task_t task, const uint16_t period) {
+void scheduler_add_task(const task_t task, const uint16_t period) {
 
     for(uint8_t i=0; i<SCHEDULER_TASK_MAX_NUM; i++) {
 
         if(!task_list[i].task) {
 
-            task_list[i].id = id;
             task_list[i].task = task;
             task_list[i].delay = period;
             task_list[i].period = period;
@@ -31,17 +29,6 @@ void scheduler_add_task(const uint8_t id, const task_t task, const uint16_t peri
             return;
         }
     }
-}
-
-void scheduler_delete_task(const uint8_t id) {
-	for(uint8_t i=0; i<SCHEDULER_TASK_MAX_NUM; i++) {
-		if(task_list[i].id==id) {
-
-			task_list[i].task = NULL;
-
-			return;
-		}
-	}
 }
 
 void scheduler_start() {

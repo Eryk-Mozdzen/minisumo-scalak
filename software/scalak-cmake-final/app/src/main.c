@@ -51,6 +51,8 @@ int main() {
 	periph_init();
 	motors_init();
 
+	ws2812b_set(0, 0, 0);
+
 	// tick generation
 	// timer 0 overflow interrupt (33ms)
 	// this scales down right motor PWM frequency 1024 times
@@ -58,7 +60,7 @@ int main() {
     TIMSK0 = (1<<TOIE0);
 	sei();
 
-	//scheduler_add_task(3, debug, 100/33);
+	//scheduler_add_task(debug, 100/33);
 
 	robot_init();
 

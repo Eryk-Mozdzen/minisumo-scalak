@@ -10,8 +10,7 @@
 
 typedef void (*task_t)();
 
-void scheduler_add_task(const uint8_t, const task_t, const uint16_t);
-void scheduler_delete_task(const uint8_t);
+void scheduler_add_task(const task_t, const uint16_t);
 void scheduler_start();
 void scheduler_tick();
 
