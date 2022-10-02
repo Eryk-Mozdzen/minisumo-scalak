@@ -40,7 +40,7 @@ void periph_init() {
 	// eeprom
 	EECR &=~((1<<EEPM1) | (1<<EEPM0));
 
-	scheduler_add_task(reader_task, 100/33);
+	scheduler_add_task(reader_task, 100/TICK_MS);
 }
 
 void line_get_raw(uint16_t *dest) {

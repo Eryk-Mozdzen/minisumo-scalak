@@ -33,6 +33,7 @@ target_compile_options(${TARGET} PRIVATE
 
 target_compile_definitions(${TARGET} PRIVATE
 	F_CPU=8000000UL
+	TICK_MS=8
 )
 
 target_link_options(${TARGET} PRIVATE

@@ -34,7 +34,7 @@ void motors_init() {
 	TCCR1A |=(1<<COM1A1) | (1<<WGM10);
 	TCCR1B |=(1<<CS10) | (1<<WGM12);
 
-	scheduler_add_task(update_task, 0);
+	scheduler_add_task(update_task, 1);
 }
 
 void motors_set(int16_t left, int16_t right) {

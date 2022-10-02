@@ -52,13 +52,13 @@ int main() {
 	ws2812b_set(0, 0, 0);
 
 	// tick generation
-	// timer 0 overflow interrupt (33ms)
-	// this scales down right motor PWM frequency 1024 times
-	TCCR0B = (1<<CS02) | (1<<CS00);
+	// timer 0 overflow interrupt (8ms)
+	// this scales down right motor PWM frequency 256 times
+	TCCR0B = (1<<CS02);
     TIMSK0 = (1<<TOIE0);
 	sei();
 
-	//scheduler_add_task(debug, 100/33);
+	//scheduler_add_task(debug, 100/TICK_MS);
 
 	robot_init();
 

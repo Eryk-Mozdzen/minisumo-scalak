@@ -83,6 +83,9 @@ static void ready_enter() {
 }
 
 static void ready_execute() {
+
+	if(scheduler_tick_count%4)
+		return;
 	
 	const uint8_t (*color1)[3] = &array[((12*ready_color_counter)/ROBOT_READY_COLOR_COUNTER_MAX)%12];
 	const uint8_t (*color2)[3] = &array[(((12*ready_color_counter)/ROBOT_READY_COLOR_COUNTER_MAX) + 1)%12];
