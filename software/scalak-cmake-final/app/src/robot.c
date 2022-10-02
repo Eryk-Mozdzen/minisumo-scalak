@@ -83,7 +83,7 @@ static void ready_enter() {
 }
 
 static void ready_execute() {
-
+	
 	const uint8_t (*color1)[3] = &array[((12*ready_color_counter)/ROBOT_READY_COLOR_COUNTER_MAX)%12];
 	const uint8_t (*color2)[3] = &array[(((12*ready_color_counter)/ROBOT_READY_COLOR_COUNTER_MAX) + 1)%12];
 
@@ -167,5 +167,5 @@ void robot_init() {
 
 	fsm_start(&fsm, eeprom_read(ROBOT_EEPROM_ADDRESS_STATE));
 
-	scheduler_add_task(loop, 0);
+	scheduler_add_task(loop, 1);
 }

@@ -1,62 +1,38 @@
 #include "scheduler.h"
 
-typedef enum {
-	TASK_STATE_READY,
-	TASK_STATE_RUNNING,
-	TASK_STATE_BLOCKED
-} task_state_t;
-
 typedef struct {
-	uint16_t delay;
-	uint16_t period;
 	task_t task;
-	task_state_t state;
+	uint16_t next;
+	uint16_t period;
 } tcb_t;
 
 static tcb_t task_list[SCHEDULER_TASK_MAX_NUM];
+static uint8_t task_num;
+volatile uint16_t scheduler_tick_count;
 
 void scheduler_add_task(const task_t task, const uint16_t period) {
 
-    for(uint8_t i=0; i<SCHEDULER_TASK_MAX_NUM; i++) {
+	if(task_num>=SCHEDULER_TASK_MAX_NUM)
+		return;
 
-        if(!task_list[i].task) {
+	task_list[task_num].task = task;
+	task_list[task_num].next = scheduler_tick_count + period;
+	task_list[task_num].period = period;
 
-            task_list[i].task = task;
-            task_list[i].delay = period;
-            task_list[i].period = period;
-            task_list[i].state = TASK_STATE_BLOCKED;
-
-            return;
-        }
-    }
+	task_num++;
 }
 
 void scheduler_start() {
 
 	while(1) {
 
-		for(uint8_t i=0; i<SCHEDULER_TASK_MAX_NUM; i++) {
+		for(uint8_t i=0; i<task_num; i++) {
 
-			if(task_list[i].state==TASK_STATE_READY && task_list[i].task) {
+			if(task_list[i].next<=scheduler_tick_count) {
 
-				task_list[i].state = TASK_STATE_RUNNING;
+				task_list[i].next = scheduler_tick_count + task_list[i].period;
+
 				(*task_list[i].task)();
-				task_list[i].delay = task_list[i].period;
-				task_list[i].state = TASK_STATE_BLOCKED;
-			}
-		}
-	}
-}
-
-void scheduler_tick() {
-
-	for(uint8_t i=0; i<SCHEDULER_TASK_MAX_NUM; i++) {
-
-		if(task_list[i].state==TASK_STATE_BLOCKED) {
-			if(task_list[i].delay) {
-				task_list[i].delay--;
-			} else {
-				task_list[i].state = TASK_STATE_READY;
 			}
 		}
 	}

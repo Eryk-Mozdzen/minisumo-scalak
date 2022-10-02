@@ -1,9 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <util/delay.h>
 
 #include <scheduler.h>
-#include <finite_state_machine.h>
 
 #include "ws2812b.h"
 #include "rc5.h"
@@ -41,7 +39,7 @@ void debug() {
 }
 
 ISR(TIMER0_OVF_vect) {
-	scheduler_tick();
+	scheduler_tick_count++;
 }
 
 int main() {
