@@ -6,7 +6,7 @@
 #include <util/delay.h>
 
 #include "rc5.h"
-#include "ws2812b.h"
+#include "led.h"
 #include "motors.h"
 #include "periph.h"
 

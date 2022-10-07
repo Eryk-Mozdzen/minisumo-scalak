@@ -89,13 +89,13 @@ void rc5_init() {
 	fsm_define_state(&fsm, RC5_STATE_RESET,		reset,	NULL, NULL);
 
 	// transition definition from RC5 graph and reset transition
-	fsm_define_transition(&fsm, RC5_STATE_START1,	RC5_STATE_MID1,		NULL, get_short_space);
-	fsm_define_transition(&fsm, RC5_STATE_MID1,		RC5_STATE_START1,	NULL, get_short_pulse);
-	fsm_define_transition(&fsm, RC5_STATE_MID1,		RC5_STATE_MID0,		NULL, get_long_pulse);
-	fsm_define_transition(&fsm, RC5_STATE_MID0,		RC5_STATE_MID1,		NULL, get_long_space);
-	fsm_define_transition(&fsm, RC5_STATE_MID0,		RC5_STATE_START0,	NULL, get_short_space);
-	fsm_define_transition(&fsm, RC5_STATE_START0,	RC5_STATE_MID0,		NULL, get_short_pulse);
-	fsm_define_transition(&fsm, RC5_STATE_RESET,	RC5_STATE_MID1,		NULL, NULL);
+	fsm_define_transition(&fsm, RC5_STATE_START1,	RC5_STATE_MID1,		get_short_space);
+	fsm_define_transition(&fsm, RC5_STATE_MID1,		RC5_STATE_START1,	get_short_pulse);
+	fsm_define_transition(&fsm, RC5_STATE_MID1,		RC5_STATE_MID0,		get_long_pulse);
+	fsm_define_transition(&fsm, RC5_STATE_MID0,		RC5_STATE_MID1,		get_long_space);
+	fsm_define_transition(&fsm, RC5_STATE_MID0,		RC5_STATE_START0,	get_short_space);
+	fsm_define_transition(&fsm, RC5_STATE_START0,	RC5_STATE_MID0,		get_short_pulse);
+	fsm_define_transition(&fsm, RC5_STATE_RESET,	RC5_STATE_MID1,		NULL);
 
 	fsm_start(&fsm, RC5_STATE_RESET);
 

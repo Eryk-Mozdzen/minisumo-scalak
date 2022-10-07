@@ -53,11 +53,10 @@ uint8_t fsm_define_state(fsm_t *st, uint8_t id, __fsm_behavior_t enter, __fsm_be
  * @param st pointer to state machine
  * @param curr_id identifier of the state when event occurred
  * @param next_id identifier of the state that should be set after event occurred
- * @param transfer event transfer function
  * @param get event getter function
  * @return status of operation, 0 if success, 1 if error
  */
-uint8_t fsm_define_transition(fsm_t *st, uint8_t curr_id, uint8_t next_id, __fsm_behavior_t transfer, __fsm_getter_t get) {
+uint8_t fsm_define_transition(fsm_t *st, uint8_t curr_id, uint8_t next_id, __fsm_getter_t get) {
 	if(curr_id==next_id)
     	return EXIT_FAILURE;
 
@@ -73,7 +72,6 @@ uint8_t fsm_define_transition(fsm_t *st, uint8_t curr_id, uint8_t next_id, __fsm
     st->states[curr_index].events_num++;
 
     // write data
-    st->states[curr_index].events[st->states[curr_index].events_num-1].transfer = transfer;
     st->states[curr_index].events[st->states[curr_index].events_num-1].get = get;
     st->states[curr_index].events[st->states[curr_index].events_num-1].next_index = next_index;
 
@@ -125,10 +123,6 @@ uint8_t fsm_update(fsm_t *st) {
 		// call exit function for current state if exist
 		if(st->states[st->curr_state_index].exit)
 			st->states[st->curr_state_index].exit();
-
-		// call transfer function for this event if exist
-		if(event->transfer)
-			event->transfer();
 
 		// call enter function for next state if exist
 		if(st->states[event->next_index].enter)

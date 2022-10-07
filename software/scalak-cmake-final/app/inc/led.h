@@ -1,5 +1,5 @@
-#ifndef WS2812B_H_
-#define WS2812B_H_
+#ifndef LED_H_
+#define LED_H_
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -11,6 +11,6 @@
 
 #define LED_STRIP_SIZE	1
 
-void ws2812b_set(uint8_t, uint8_t, uint8_t);
+void led_set(uint8_t, uint8_t, uint8_t);
 
 #endif

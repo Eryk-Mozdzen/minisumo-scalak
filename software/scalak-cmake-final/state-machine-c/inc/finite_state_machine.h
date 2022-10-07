@@ -21,7 +21,6 @@ typedef uint8_t (*__fsm_getter_t)();
  * @brief event object
  */
 typedef struct {
-	__fsm_behavior_t transfer;	/*< function called when the event occurs and it has the highest priority, set NULL if not needed  */
 	__fsm_getter_t get;			/*< function to check if event occurs, set NULL if no event is needed to switch state */
 
     uint8_t next_index;			/*< index of next state */
@@ -54,7 +53,7 @@ typedef struct {
 void fsm_init(fsm_t *);
 
 uint8_t fsm_define_state(fsm_t *, uint8_t, __fsm_behavior_t, __fsm_behavior_t, __fsm_behavior_t);
-uint8_t fsm_define_transition(fsm_t *, uint8_t, uint8_t, __fsm_behavior_t, __fsm_getter_t);
+uint8_t fsm_define_transition(fsm_t *, uint8_t, uint8_t, __fsm_getter_t);
 
 uint8_t fsm_start(fsm_t *, uint8_t);
 uint8_t fsm_update(fsm_t *);

@@ -36,15 +36,7 @@ static uint8_t flag_stop_cmd;
 
 static void loop() {
 	if(rc5_get_message(&rc5_msg)) {
-		if(rc5_msg.command==eeprom_start_cmd) {
-			// start command
-			flag_start_cmd = 1;
-
-		} else if(rc5_msg.command==eeprom_stop_cmd) {
-			// stop command
-			flag_stop_cmd = 1;
-
-		} else if(rc5_msg.address==0x0B) {
+		if(rc5_msg.address==0x0B) {
 			// programming command
 			flag_program_cmd = 1;
 
@@ -53,6 +45,14 @@ static void loop() {
 
 			eeprom_write(ROBOT_EEPROM_ADDRESS_START, eeprom_start_cmd);
 			eeprom_write(ROBOT_EEPROM_ADDRESS_STOP, eeprom_stop_cmd);
+		} else if(rc5_msg.command==eeprom_start_cmd) {
+			// start command
+			flag_start_cmd = 1;
+
+		} else if(rc5_msg.command==eeprom_stop_cmd) {
+			// stop command
+			flag_stop_cmd = 1;
+
 		}
 	}
 
@@ -96,7 +96,7 @@ static void ready_execute() {
 	const uint8_t g = (((uint16_t)(*color2)[1])*fraq + ((uint16_t)(*color1)[1])*(ROBOT_READY_COLOR_COUNTER_MAX - fraq))/ROBOT_READY_COLOR_COUNTER_MAX;
 	const uint8_t b = (((uint16_t)(*color2)[2])*fraq + ((uint16_t)(*color1)[2])*(ROBOT_READY_COLOR_COUNTER_MAX - fraq))/ROBOT_READY_COLOR_COUNTER_MAX;
 	
-	ws2812b_set(r/8, g/8, b/8);
+	led_set(r/8, g/8, b/8);
 
 	ready_color_counter++;
 	ready_color_counter %=ROBOT_READY_COLOR_COUNTER_MAX;
@@ -105,19 +105,19 @@ static void ready_execute() {
 static void program_enter() {
 	motors_set(0, 0);
 
-	ws2812b_set(255, 255, 0);
+	led_set(255, 255, 0);
 	_delay_ms(250);
-	ws2812b_set(0, 0, 0);
+	led_set(0, 0, 0);
 	_delay_ms(250);
 
-	ws2812b_set(255, 255, 0);
+	led_set(255, 255, 0);
 	_delay_ms(250);
-	ws2812b_set(0, 0, 0);
+	led_set(0, 0, 0);
 	_delay_ms(250);
 }
 
 static void run_enter() {
-	ws2812b_set(0, 255, 0);
+	led_set(0, 255, 0);
 
 	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_RUN);
 
@@ -125,7 +125,7 @@ static void run_enter() {
 }
 
 static void run_execute() {
-	ws2812b_set(0, 255, 0);
+	led_set(0, 255, 0);
 
 	//fight_update();
 }
@@ -135,7 +135,7 @@ static void stop1_enter() {
 
 	motors_set(0, 0);
 
-	ws2812b_set(255, 32, 0);
+	led_set(255, 32, 0);
 
 	_delay_ms(1000);
 }
@@ -145,7 +145,7 @@ static void stop2_enter() {
 
 	motors_set(0, 0);
 
-	ws2812b_set(255, 0, 0);
+	led_set(255, 0, 0);
 }
 
 void robot_init() {
@@ -158,12 +158,12 @@ void robot_init() {
 	fsm_define_state(&fsm, ROBOT_STATE_STOP1,		stop1_enter,	NULL,			NULL);
 	fsm_define_state(&fsm, ROBOT_STATE_STOP2,		stop2_enter,	NULL,			NULL);
 
-	fsm_define_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_PROGRAM,	NULL, get_program);
-	fsm_define_transition(&fsm, ROBOT_STATE_PROGRAM,	ROBOT_STATE_READY,		NULL, NULL);
-	fsm_define_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_RUN,		NULL, get_start);
-	fsm_define_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_PROGRAM,	NULL, get_program);
-	fsm_define_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_STOP1,		NULL, get_stop);
-	fsm_define_transition(&fsm, ROBOT_STATE_STOP1,		ROBOT_STATE_STOP2,		NULL, NULL);
+	fsm_define_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_PROGRAM,	get_program);
+	fsm_define_transition(&fsm, ROBOT_STATE_PROGRAM,	ROBOT_STATE_READY,		NULL);
+	fsm_define_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_RUN,		get_start);
+	fsm_define_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_PROGRAM,	get_program);
+	fsm_define_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_STOP1,		get_stop);
+	fsm_define_transition(&fsm, ROBOT_STATE_STOP1,		ROBOT_STATE_STOP2,		NULL);
 
 	eeprom_start_cmd = eeprom_read(ROBOT_EEPROM_ADDRESS_START);
 	eeprom_stop_cmd = eeprom_read(ROBOT_EEPROM_ADDRESS_STOP);

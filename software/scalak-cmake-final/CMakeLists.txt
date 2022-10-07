@@ -11,7 +11,7 @@ add_subdirectory(state-machine-c)
 
 add_executable(${TARGET}
 	"app/src/main.c"
-	"app/src/ws2812b.c"
+	"app/src/led.c"
 	"app/src/rc5.c"
 	"app/src/uart.c"
 	"app/src/periph.c"

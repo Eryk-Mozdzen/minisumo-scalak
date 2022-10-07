@@ -3,7 +3,7 @@
 
 #include <scheduler.h>
 
-#include "ws2812b.h"
+#include "led.h"
 #include "rc5.h"
 #include "uart.h"
 #include "periph.h"
@@ -49,7 +49,7 @@ int main() {
 	periph_init();
 	motors_init();
 
-	ws2812b_set(0, 0, 0);
+	led_set(0, 0, 0);
 
 	// tick generation
 	// timer 0 overflow interrupt (8ms)
@@ -57,10 +57,10 @@ int main() {
 	TCCR0B = (1<<CS02);
     TIMSK0 = (1<<TOIE0);
 	sei();
-
-	//scheduler_add_task(debug, 100/TICK_MS);
-
+	
 	robot_init();
+
+	scheduler_add_task(debug, 100/TICK_MS);
 
 	scheduler_start();
 
