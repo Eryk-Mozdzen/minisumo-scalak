@@ -44,12 +44,11 @@ ISR(TIMER0_OVF_vect) {
 
 int main() {
 
-	uart_init(38400);
+	led_init();
 	rc5_init();
+	uart_init();
 	periph_init();
 	motors_init();
-
-	led_set(0, 0, 0);
 
 	// tick generation
 	// timer 0 overflow interrupt (8ms)
@@ -63,5 +62,4 @@ int main() {
 	scheduler_add_task(debug, 100/TICK_MS);
 
 	scheduler_start();
-
 }
