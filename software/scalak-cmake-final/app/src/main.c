@@ -59,7 +59,9 @@ int main() {
 	
 	robot_init();
 
-	scheduler_add_task(debug, 100/TICK_MS);
+	#ifdef PRINT
+		scheduler_add_task(debug, 100/TICK_MS);
+	#endif
 
 	scheduler_start();
 }

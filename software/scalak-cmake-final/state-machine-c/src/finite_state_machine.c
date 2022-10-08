@@ -14,7 +14,6 @@ static uint8_t get_state_index(fsm_t *, uint8_t, uint8_t *);
 /**
  * @brief Initialize fields in state machine structure
  * @param st pointer to state machine
- * @param buffer memory buffer for user data
  */
 void fsm_init(fsm_t *st) {
     // init fields

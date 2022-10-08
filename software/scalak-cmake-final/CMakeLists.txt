@@ -36,10 +36,15 @@ target_compile_definitions(${TARGET} PRIVATE
 	TICK_MS=8
 )
 
+OPTION(PRINT OFF)
+
+IF(PRINT)
+	target_compile_definitions(${TARGET} PRIVATE PRINT)
+	target_link_options(${TARGET} PRIVATE -Wl,-u,vfprintf -lprintf_flt)
+ENDIF(PRINT)
+
 target_link_options(${TARGET} PRIVATE
 	-mmcu=atmega328p
-	-Wl,-u,vfprintf
-	-lprintf_flt
 )
 
 target_link_libraries(${TARGET} PRIVATE
