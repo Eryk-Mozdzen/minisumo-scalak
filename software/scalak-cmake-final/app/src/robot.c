@@ -33,6 +33,8 @@ static uint8_t flag_program_cmd;
 static uint8_t flag_start_cmd;
 static uint8_t flag_stop_cmd;
 
+static uint8_t flag_last_enemy_dir;
+
 static void loop() {
 	rc5_message_t rc5_msg;
 
@@ -137,11 +139,45 @@ static void run_enter() {
 
 	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_RUN);
 
-	//fight_init();
+	flag_last_enemy_dir = switch_get();
 }
 
 static void run_execute() {
-	//fight_update();
+
+	uint8_t prox[5];
+	prox_get(prox);
+
+	const int8_t weights[5] = {-90, -45, 0, 45, 90};
+	int16_t sum = 0;
+	int8_t count = 0;
+
+	for(uint8_t i=0; i<5; i++) {
+		if(prox[i]) {
+			sum +=weights[i];
+			count++;
+		}
+	}
+
+	if(!count) {
+		// enemy not spotted
+
+		if(flag_last_enemy_dir) {
+			motors_set(255, 0);
+		} else {
+			motors_set(0, 255);
+		}
+
+		return;
+	}
+
+	const int16_t dir = sum/count;
+
+	flag_last_enemy_dir = dir>0;
+	
+	motors_set(
+		255 + 2*dir,
+		255 - 2*dir
+	);
 }
 
 static void stop1_enter() {
@@ -170,11 +206,11 @@ void robot_init() {
 
 	fsm_init(&fsm);
 
-	fsm_define_state(&fsm, ROBOT_STATE_READY,		ready_enter,	ready_execute,		NULL);
-	fsm_define_state(&fsm, ROBOT_STATE_PROGRAM,		program_enter,	program_execute,	NULL);
-	fsm_define_state(&fsm, ROBOT_STATE_RUN,			run_enter,		run_execute,		NULL);
-	fsm_define_state(&fsm, ROBOT_STATE_STOP1,		stop1_enter,	stop1_execute,		NULL);
-	fsm_define_state(&fsm, ROBOT_STATE_STOP2,		stop2_enter,	NULL,				NULL);
+	fsm_define_state(&fsm, ROBOT_STATE_READY,	ready_enter,	ready_execute,		NULL);
+	fsm_define_state(&fsm, ROBOT_STATE_PROGRAM,	program_enter,	program_execute,	NULL);
+	fsm_define_state(&fsm, ROBOT_STATE_RUN,		run_enter,		run_execute,		NULL);
+	fsm_define_state(&fsm, ROBOT_STATE_STOP1,	stop1_enter,	stop1_execute,		NULL);
+	fsm_define_state(&fsm, ROBOT_STATE_STOP2,	stop2_enter,	NULL,				NULL);
 
 	fsm_define_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_PROGRAM,	get_program);
 	fsm_define_transition(&fsm, ROBOT_STATE_PROGRAM,	ROBOT_STATE_READY,		get_timeout);
