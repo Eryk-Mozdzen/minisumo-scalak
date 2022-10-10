@@ -52,7 +52,6 @@ int main() {
 
 	// tick generation
 	// timer 0 overflow interrupt (8ms)
-	// this scales down right motor PWM frequency 256 times
 	TCCR0B = (1<<CS02);
     TIMSK0 = (1<<TOIE0);
 	sei();
