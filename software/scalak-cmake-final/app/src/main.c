@@ -5,13 +5,16 @@
 
 #include "led.h"
 #include "rc5.h"
+#ifdef PRINT
 #include "uart.h"
+#endif
 #include "periph.h"
 #include "motors.h"
 
 #include "robot.h"
 
-void debug() {
+#ifdef PRINT
+void print_sensor_info() {
 	uint8_t line[2];
 	uint16_t line_raw[2];
 
@@ -37,6 +40,7 @@ void debug() {
 
 	printf("switch: %d\n\rbutton: %d\n\r", sw, butt);
 }
+#endif
 
 ISR(TIMER0_OVF_vect) {
 	scheduler_tick_count++;
@@ -46,20 +50,22 @@ int main() {
 
 	led_init();
 	rc5_init();
+	#ifdef PRINT
 	uart_init();
+	#endif
 	periph_init();
 	motors_init();
 
 	// tick generation
 	// timer 0 overflow interrupt (8ms)
-	TCCR0B = (1<<CS02);
-    TIMSK0 = (1<<TOIE0);
+	TCCR0B |=(1<<CS02);
+    TIMSK0 |=(1<<TOIE0);
 	sei();
 	
 	robot_init();
 
 	#ifdef PRINT
-		scheduler_add_task(debug, 100/TICK_MS);
+	scheduler_add_task(print_sensor_info, 100/TICK_MS);
 	#endif
 
 	scheduler_start();
