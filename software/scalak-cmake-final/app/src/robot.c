@@ -8,19 +8,17 @@ typedef enum {
 	ROBOT_STATE_STOP2 = 0x40
 } robot_state_t;
 
-static const uint8_t array[12][3] = {
-	{255,   0, 255},
-	{255,   0, 127},
-	{255,   0,   0},
-	{255, 127,   0},
-	{255, 255,   0},
-	{127, 255,   0},
-	{  0, 255,   0},
-	{  0, 255, 127},
-	{  0, 255, 255},
-	{  0, 127, 255},
+#define ARRAY_SIZE	8
+
+static const uint8_t array[ARRAY_SIZE][3] = {
 	{  0,   0, 255},
-	{127,   0, 255}
+	{127,   0, 255},
+	{255,   0, 255},
+	{127,   0, 255},
+	{  0,   0, 255},
+	{  0, 127, 255},
+	{  0, 255, 255},
+	{  0, 127, 255}
 };
 
 static fsm_t fsm;
@@ -93,19 +91,19 @@ static void ready_enter() {
 
 static void ready_execute() {
 
-	if(scheduler_tick_count%4)
+	if(scheduler_tick_count%2)
 		return;
 	
-	const uint8_t (*color1)[3] = &array[((12*counter)/ROBOT_READY_LED_COUNTER_MAX)%12];
-	const uint8_t (*color2)[3] = &array[(((12*counter)/ROBOT_READY_LED_COUNTER_MAX) + 1)%12];
+	const uint8_t (*color1)[3] = &array[((ARRAY_SIZE*counter)/ROBOT_READY_LED_COUNTER_MAX)%ARRAY_SIZE];
+	const uint8_t (*color2)[3] = &array[(((ARRAY_SIZE*counter)/ROBOT_READY_LED_COUNTER_MAX) + 1)%ARRAY_SIZE];
 
-	const uint16_t fraq = (12*counter)%ROBOT_READY_LED_COUNTER_MAX;
+	const uint16_t fraq = (ARRAY_SIZE*counter)%ROBOT_READY_LED_COUNTER_MAX;
 
 	const uint8_t r = (((uint16_t)(*color2)[0])*fraq + ((uint16_t)(*color1)[0])*(ROBOT_READY_LED_COUNTER_MAX - fraq))/ROBOT_READY_LED_COUNTER_MAX;
 	const uint8_t g = (((uint16_t)(*color2)[1])*fraq + ((uint16_t)(*color1)[1])*(ROBOT_READY_LED_COUNTER_MAX - fraq))/ROBOT_READY_LED_COUNTER_MAX;
 	const uint8_t b = (((uint16_t)(*color2)[2])*fraq + ((uint16_t)(*color1)[2])*(ROBOT_READY_LED_COUNTER_MAX - fraq))/ROBOT_READY_LED_COUNTER_MAX;
 	
-	led_set(r/8, g/8, b/8);
+	led_set(r/4, g/4, b/4);
 
 	counter++;
 	counter %=ROBOT_READY_LED_COUNTER_MAX;
@@ -116,16 +114,16 @@ static void program_enter() {
 
 	motors_set(0, 0);
 
-	counter = 1000/TICK_MS;
+	counter = 512/TICK_MS;
 }
 
 static void program_execute() {
 
-	if(counter<250/TICK_MS) {
+	if(counter<128/TICK_MS) {
 		led_set(0, 0, 0);
-	} else if(counter<500/TICK_MS) {
+	} else if(counter<256/TICK_MS) {
 		led_set(255, 255, 0);
-	} else if(counter<750/TICK_MS) {
+	} else if(counter<384/TICK_MS) {
 		led_set(0, 0, 0);
 	} else {
 		led_set(255, 255, 0);

@@ -6,9 +6,6 @@ project(scalak-cmake-final)
 
 set(TARGET ${CMAKE_PROJECT_NAME}.elf)
 
-add_subdirectory(scheduler-c)
-add_subdirectory(state-machine-c)
-
 add_executable(${TARGET}
 	"app/src/main.c"
 	"app/src/led.c"
@@ -17,6 +14,8 @@ add_executable(${TARGET}
 	"app/src/periph.c"
 	"app/src/motors.c"
 	"app/src/robot.c"
+	"app/src/scheduler.c"
+	"app/src/finite_state_machine.c"
 )
 
 target_include_directories(${TARGET} PRIVATE
@@ -47,10 +46,7 @@ target_link_options(${TARGET} PRIVATE
 	-mmcu=atmega328p
 )
 
-target_link_libraries(${TARGET} PRIVATE
-	scheduler
-	fsm
-)
+#target_link_libraries(${TARGET} PRIVATE)
 
 add_custom_command(
 	TARGET ${TARGET} POST_BUILD
