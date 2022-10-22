@@ -140,7 +140,14 @@ static void run_enter() {
 	flag_last_enemy_dir = switch_get();
 }
 
+static uint16_t limit = 20;
+
 static void run_execute() {
+
+	if(limit<255)
+		limit++;
+
+	motors_limit(limit);
 
 	uint8_t prox[5];
 	prox_get(prox);
@@ -160,9 +167,9 @@ static void run_execute() {
 		// enemy not spotted
 
 		if(flag_last_enemy_dir) {
-			motors_set(255, 0);
+			motors_set(128, 0);
 		} else {
-			motors_set(0, 255);
+			motors_set(0, 128);
 		}
 
 		return;
@@ -173,8 +180,8 @@ static void run_execute() {
 	flag_last_enemy_dir = dir>0;
 	
 	motors_set(
-		255 + 2*dir,
-		255 - 2*dir
+		255 + 4*dir,
+		255 - 4*dir
 	);
 }
 

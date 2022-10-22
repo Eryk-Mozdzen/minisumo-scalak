@@ -1,6 +1,7 @@
 #include "motors.h"
 
 static int16_t power[2];
+static int16_t limit;
 
 void motors_init() {
 
@@ -9,17 +10,23 @@ void motors_init() {
 	
 	TCCR1A |=(1<<COM1A1) | (1<<COM1B1) | (1<<WGM10);
 	TCCR1B |=(1<<CS10) | (1<<WGM12);
+
+	limit = 255;
+}
+
+void motors_limit(uint8_t lim) {
+	limit = lim;
 }
 
 void motors_set(int16_t left, int16_t right) {
-	if(left>255)
-		left = 255;
-	if(left<-255)
-		left = -255;
-	if(right>255)
-		right = 255;
-	if(right<-255)
-		right = -255;
+	if(left>limit)
+		left = limit;
+	if(left<-limit)
+		left = -limit;
+	if(right>limit)
+		right = limit;
+	if(right<-limit)
+		right = -limit;
 
 	power[0] = left;
 	power[1] = right;
