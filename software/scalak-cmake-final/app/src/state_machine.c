@@ -7,9 +7,20 @@
 #include "state_machine.h"
 
 /**
- * @brief functions only for internal use
+ * @brief Search for pointer to specific state.
+ * @param st pointer to state machine
+ * @param id identifier of the state
+ * @return pointer to state, NULL if not defined
  */
-static uint8_t get_state_index(fsm_t *, uint8_t, uint8_t *);
+static struct __fsm_state * get_state_ptr(fsm_t *st, uint8_t id) {
+    for(uint8_t i=0; i<st->states_num; i++) {
+        if(st->states[i].id==id) {
+			return &st->states[i];
+        }
+    }
+    
+    return NULL;
+}
 
 /**
  * @brief Initialize fields in state machine structure
@@ -17,8 +28,8 @@ static uint8_t get_state_index(fsm_t *, uint8_t, uint8_t *);
  */
 void fsm_init(fsm_t *st) {
     // init fields
-    st->curr_state_index = 0;
-    st->states_num = 0;
+    st->curr_state = NULL;
+	st->states_num = 0;
 }
 
 /**
@@ -28,23 +39,20 @@ void fsm_init(fsm_t *st) {
  * @param enter state enter function
  * @param execute state execute function
  * @param exit state exit function
- * @return status of operation, 0 if success, 1 if error
  */
-uint8_t fsm_define_state(fsm_t *st, uint8_t id, __fsm_behavior_t enter, __fsm_behavior_t execute, __fsm_behavior_t exit) {
-    // check if already exist
-    if(!get_state_index(st, id, NULL))
-        return EXIT_FAILURE;
+void fsm_define_state(fsm_t *st, uint8_t id, __fsm_behavior_t enter, __fsm_behavior_t execute, __fsm_behavior_t exit) {
 
-    st->states_num++;
+	if(st->states_num>=FSM_STATE_MAX_NUM)
+		return;
 
     // write init values
-    st->states[st->states_num-1].id = id;
-    st->states[st->states_num-1].enter = enter;
-    st->states[st->states_num-1].execute = execute;
-    st->states[st->states_num-1].exit = exit;
-    st->states[st->states_num-1].events_num = 0;
-    
-    return EXIT_SUCCESS;
+    st->states[st->states_num].id = id;
+    st->states[st->states_num].enter = enter;
+    st->states[st->states_num].execute = execute;
+    st->states[st->states_num].exit = exit;
+	st->states[st->states_num].events_num = 0;
+
+	st->states_num++;
 }
 
 /**
@@ -53,118 +61,92 @@ uint8_t fsm_define_state(fsm_t *st, uint8_t id, __fsm_behavior_t enter, __fsm_be
  * @param curr_id identifier of the state when event occurred
  * @param next_id identifier of the state that should be set after event occurred
  * @param get event getter function
- * @return status of operation, 0 if success, 1 if error
  */
-uint8_t fsm_define_transition(fsm_t *st, uint8_t curr_id, uint8_t next_id, __fsm_getter_t get) {
-	if(curr_id==next_id)
-    	return EXIT_FAILURE;
+void fsm_define_transition(fsm_t *st, uint8_t curr_id, uint8_t next_id, __fsm_getter_t get) {
 
-    // get internal indexes
-    uint8_t curr_index = 0;
-    uint8_t next_index = 0;
-    if(get_state_index(st, curr_id, &curr_index))
-        return EXIT_FAILURE;
-    if(get_state_index(st, next_id, &next_index))
-        return EXIT_FAILURE;
-
-    // allocate memory
-    st->states[curr_index].events_num++;
+    // get states
+	struct __fsm_state *curr_state = get_state_ptr(st, curr_id);
+	struct __fsm_state *next_state = get_state_ptr(st, next_id);
+	if(!curr_state || !next_state)
+		return;
 
     // write data
-    st->states[curr_index].events[st->states[curr_index].events_num-1].get = get;
-    st->states[curr_index].events[st->states[curr_index].events_num-1].next_index = next_index;
+	if(curr_state->events_num>=FSM_EVENT_MAX_NUM)
+		return;
 
-    return EXIT_SUCCESS;
+    curr_state->events[curr_state->events_num].get = get;
+    curr_state->events[curr_state->events_num].next_state = next_state;
+	
+	curr_state->events_num++;
 }
 
 /**
  * @brief Set inital state for state machine, call enter function if exist
  * @param st pointer to state machine
  * @param initial_id identifier of state that should be at the begin of the program, must be defined before
- * @return status of operation, 0 if success, 1 if error
  */
-uint8_t fsm_start(fsm_t *st, uint8_t initial_id) {
-    if(get_state_index(st, initial_id, &st->curr_state_index))
-        return EXIT_FAILURE;
+void fsm_start(fsm_t *st, uint8_t initial_id) {
 
-    // call enter function for initial state
-    if(st->states[st->curr_state_index].enter)
-        st->states[st->curr_state_index].enter();
+	struct __fsm_state *initial_state = get_state_ptr(st, initial_id);
+    if(!initial_state)
+        return;
 
-    return EXIT_SUCCESS;
+	// set current state to initial state
+	st->curr_state = initial_state;
+
+    // call enter function for current state
+    if(st->curr_state->enter)
+        st->curr_state->enter();
 }
 
 /**
  * @brief Check if any event occurred, change state if it's required
  * @param st pointer to state machine
- * @return status of operation, 0 if success, 1 if error
  */
-uint8_t fsm_update(fsm_t *st) {
-    if(!st->states_num)
-        return EXIT_FAILURE;
+void fsm_update(fsm_t *st) {
+
+	if(!st->curr_state)
+		return;
 
     // check if any event defined for current state occurs
-    __fsm_event_t *event = NULL;
-    for(uint8_t i=0; i<st->states[st->curr_state_index].events_num; i++) {
+	const struct __fsm_event * event = NULL;
+
+    for(uint8_t i=0; i<st->curr_state->events_num; i++) {
     	// check if event occurs
     	// if event getter is NULL, no event is needed to switch state
-    	uint8_t occur = 1;
-    	if(st->states[st->curr_state_index].events[i].get)
-    		occur = st->states[st->curr_state_index].events[i].get();
 
-		if(occur) {
-			event = &st->states[st->curr_state_index].events[i];
-			break;
+    	if(st->curr_state->events[i].get) {
+    		if(st->curr_state->events[i].get())
+				event = &st->curr_state->events[i];
+		} else {
+			event = &st->curr_state->events[i];
 		}
     }
 
-    if(event) {
-		// call exit function for current state if exist
-		if(st->states[st->curr_state_index].exit)
-			st->states[st->curr_state_index].exit();
+	if(!event)
+		return;
 
-		// call enter function for next state if exist
-		if(st->states[event->next_index].enter)
-			st->states[event->next_index].enter();
+	// call exit function for current state if exist
+	if(st->curr_state->exit)
+		st->curr_state->exit();
+	
+	// change current state
+	st->curr_state = event->next_state;
 
-		// change current state
-		st->curr_state_index = event->next_index;
-    }
-
-    return EXIT_SUCCESS;
+	// call enter function for next state if exist
+	if(st->curr_state->enter)
+		st->curr_state->enter();
 }
 
 /**
  * @brief Call execute function for current state
  * @param st pointer to state machine
- * @return status of operation, 0 if success, 1 if error
  */
-uint8_t fsm_execute(fsm_t *st) {
-	if(!st->states_num)
-		return EXIT_FAILURE;
+void fsm_execute(fsm_t *st) {
+	if(!st->curr_state)
+		return;
 
 	// call execute function for current state if exist
-	if(st->states[st->curr_state_index].execute)
-		st->states[st->curr_state_index].execute();
-
-	return EXIT_SUCCESS;
-}
-
-/**
- * @brief Search for internal index of specific state.
- * @param st pointer to state machine
- * @param state_id identifier of the state
- * @param state_index internal index of this state, unknown if state does not exist
- * @return status of operation, 0 if success, 1 if state not defined
- */
-uint8_t get_state_index(fsm_t *st, uint8_t state_id, uint8_t *state_index) {
-    for(uint8_t i=0; i<st->states_num; i++) {
-        if(st->states[i].id==state_id) {
-            if(state_index)
-                *state_index = i;
-            return EXIT_SUCCESS;
-        }
-    }
-    
-    return EXIT_FAILURE;
+	if(st->curr_state->execute)
+		st->curr_state->execute();
 }
