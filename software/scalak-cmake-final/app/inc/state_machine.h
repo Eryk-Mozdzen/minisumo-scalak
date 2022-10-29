@@ -4,8 +4,8 @@
  * @date 2021-12-24
  */
 
-#ifndef __FINITE_STATE_MACHINE_H__
-#define __FINITE_STATE_MACHINE_H__
+#ifndef STATE_MACHINE_H
+#define STATE_MACHINE_H
 
 #include <stddef.h>
 #include <stdint.h>

@@ -6,8 +6,8 @@
 #include "motors.h"
 #include "periph.h"
 
-#include <scheduler.h>
-#include <finite_state_machine.h>
+#include "scheduler.h"
+#include "state_machine.h"
 
 #define ROBOT_EEPROM_ADDRESS_START		0x00
 #define ROBOT_EEPROM_ADDRESS_STOP		0x01

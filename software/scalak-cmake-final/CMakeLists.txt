@@ -15,7 +15,7 @@ add_executable(${TARGET}
 	"app/src/motors.c"
 	"app/src/robot.c"
 	"app/src/scheduler.c"
-	"app/src/finite_state_machine.c"
+	"app/src/state_machine.c"
 )
 
 target_include_directories(${TARGET} PRIVATE

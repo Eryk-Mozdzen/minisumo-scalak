@@ -4,7 +4,7 @@
  * @date 2021-12-24
  */
 
-#include "finite_state_machine.h"
+#include "state_machine.h"
 
 /**
  * @brief functions only for internal use

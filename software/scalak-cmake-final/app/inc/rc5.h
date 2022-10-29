@@ -1,10 +1,10 @@
 #ifndef RC5_H_
 #define RC5_H_
 
+#include <stdio.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <finite_state_machine.h>
-#include <stdio.h>
+#include "state_machine.h"
 
 #define RC5_TIME_SHORT		889		// us
 #define RC5_TIME_LONG		1778	// us
