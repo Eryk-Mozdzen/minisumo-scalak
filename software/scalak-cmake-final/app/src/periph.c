@@ -1,8 +1,9 @@
 #include "periph.h"
 
 static uint16_t line_raw[2];
+static uint16_t prox_hist[5];
 
-static void reader_task() {
+static void line_task() {
 	// read left line
 	ADMUX &=~0x0F;
 	ADMUX |=(2 & 0x07);
@@ -16,6 +17,14 @@ static void reader_task() {
 	ADCSRA |=(1<<ADSC);
 	while(ADCSRA & (1<<ADSC));
 	line_raw[1] = ADC;
+}
+
+static void prox_task() {
+	prox_hist[0] = (prox_hist[0]<<1) | !(PINC & (1<<PINC3));
+	prox_hist[1] = (prox_hist[1]<<1) | !(PINC & (1<<PINC4));
+	prox_hist[2] = (prox_hist[2]<<1) | !(PINC & (1<<PINC5));
+	prox_hist[3] = (prox_hist[3]<<1) | !(PINB & (1<<PINB7));
+	prox_hist[4] = (prox_hist[4]<<1) | !(PINB & (1<<PINB6));
 }
 
 void periph_init() {
@@ -40,7 +49,8 @@ void periph_init() {
 	// eeprom
 	EECR &=~((1<<EEPM1) | (1<<EEPM0));
 
-	scheduler_add_task(reader_task, 100/TICK_MS);
+	scheduler_add_task(line_task, 100/TICK_MS);
+	scheduler_add_task(prox_task, 1);
 }
 
 void line_get_raw(uint16_t *dest) {
@@ -54,11 +64,16 @@ void line_get(uint8_t *dest) {
 }
 
 void prox_get(uint8_t *dest) {
-	dest[0] = !(PINC & (1<<PINC3));
-	dest[1] = !(PINC & (1<<PINC4));
-	dest[2] = !(PINC & (1<<PINC5));
-	dest[3] = !(PINB & (1<<PINB7));
-	dest[4] = !(PINB & (1<<PINB6));
+	for(uint8_t i=0; i<5; i++) {
+
+		uint8_t num = 0;
+		for(uint8_t j=0; j<16; j++) {
+			if(prox_hist[i] & (1<<j))
+				num++;
+		}
+
+		dest[i] = num>PROX_THRESHOLD;
+	}
 }
 
 uint8_t switch_get() {

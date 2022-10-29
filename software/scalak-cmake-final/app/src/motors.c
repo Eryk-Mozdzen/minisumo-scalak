@@ -34,19 +34,19 @@ void motors_set(int16_t left, int16_t right) {
 	// set left motor
 	if(power[0]>0) {
 		OCR1A = power[0];
-		PORTD |=(1<<PIND7);
+		PORTD &=~(1<<PIND7);
 	} else {
 		OCR1A = -power[0];
-		PORTD &=~(1<<PIND7);
+		PORTD |=(1<<PIND7);
 	}
 
 	// set right motor
 	if(power[1]>0) {
 		OCR1B = power[1];
-		PORTD &=~(1<<PIND6);
+		PORTD |=(1<<PIND6);
 	} else {
 		OCR1B = -power[1];
-		PORTD |=(1<<PIND6);
+		PORTD &=~(1<<PIND6);
 	}
 }
 

@@ -5,6 +5,7 @@
 #include <scheduler.h>
 
 #define LINE_THRESHOLD	600
+#define PROX_THRESHOLD	8
 
 void periph_init();
 
