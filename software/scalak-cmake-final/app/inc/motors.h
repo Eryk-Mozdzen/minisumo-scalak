@@ -1,7 +1,7 @@
 #ifndef MOTORS_H
 #define MOTORS_H
 
-#include <avr/io.h>
+#include <stdint.h>
 
 void motors_init();
 void motors_limit(uint8_t);

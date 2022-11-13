@@ -1,9 +1,11 @@
 #include "periph.h"
+#include <avr/io.h>
+#include "scheduler.h"
 
 static uint16_t line_raw[2];
 static uint16_t prox_hist[5];
 
-static void line_task() {
+void line_task() {
 	// read left line
 	ADMUX &=~0x0F;
 	ADMUX |=(2 & 0x07);
@@ -19,7 +21,7 @@ static void line_task() {
 	line_raw[1] = ADC;
 }
 
-static void prox_task() {
+void prox_task() {
 	prox_hist[0] = (prox_hist[0]<<1) | !(PINC & (1<<PINC3));
 	prox_hist[1] = (prox_hist[1]<<1) | !(PINC & (1<<PINC4));
 	prox_hist[2] = (prox_hist[2]<<1) | !(PINC & (1<<PINC5));
@@ -48,9 +50,6 @@ void periph_init() {
 
 	// eeprom
 	EECR &=~((1<<EEPM1) | (1<<EEPM0));
-
-	scheduler_add_task(line_task, 100/TICK_MS);
-	scheduler_add_task(prox_task, 1);
 }
 
 void line_get_raw(uint16_t *dest) {

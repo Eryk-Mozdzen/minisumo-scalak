@@ -1,31 +1,16 @@
-#ifndef RC5_H_
-#define RC5_H_
+#ifndef RC5_H
+#define RC5_H
 
-#include <stdio.h>
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include "state_machine.h"
+#include <stdint.h>
 
-#define RC5_TIME_SHORT		889		// us
-#define RC5_TIME_LONG		1778	// us
-#define RC5_TIME_TOLERANCE	444		// us
-#define RC5_TIME_PRESCALER	16		// us/LSB
+typedef uint16_t rc5_message_t;
 
-typedef union {
-	struct {
-		uint16_t command : 6;
-		uint16_t address : 5;
-		uint16_t toggle : 1;
-		uint16_t start : 2;
-		uint16_t unused : 2;
-	};
-	uint16_t frame;
-} rc5_message_t;
+#define RC5_MESSAGE_START(message)		(((message) & 0x3000)>>12)
+#define RC5_MESSAGE_TOGGLE(message)		(((message) & 0x0800)>>11)
+#define RC5_MESSAGE_ADDRESS(message)	(((message) & 0x07C0)>>6)
+#define RC5_MESSAGE_COMMAND(message)	((message) & 0x3F)
 
 void rc5_init();
 uint8_t rc5_get_message(rc5_message_t *);
-
-ISR(INT0_vect);
-ISR(TIMER2_OVF_vect);
 
 #endif

@@ -1,7 +1,8 @@
 #include "motors.h"
+#include <avr/io.h>
 
 static int16_t power[2];
-static int16_t limit;
+static int16_t limit = 255;
 
 void motors_init() {
 
@@ -10,8 +11,6 @@ void motors_init() {
 	
 	TCCR1A |=(1<<COM1A1) | (1<<COM1B1) | (1<<WGM10);
 	TCCR1B |=(1<<CS10) | (1<<WGM12);
-
-	limit = 255;
 }
 
 void motors_limit(uint8_t lim) {

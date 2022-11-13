@@ -1,20 +1,8 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include "rc5.h"
-#include "led.h"
-#include "motors.h"
-#include "periph.h"
-
-#include "scheduler.h"
-#include "state_machine.h"
-
-#define ROBOT_EEPROM_ADDRESS_START		0x00
-#define ROBOT_EEPROM_ADDRESS_STOP		0x01
-#define ROBOT_EEPROM_ADDRESS_STATE		0x02
-
-#define ROBOT_READY_LED_COUNTER_MAX		((uint16_t)240)
-
 void robot_init();
+
+void loop_task();
 
 #endif

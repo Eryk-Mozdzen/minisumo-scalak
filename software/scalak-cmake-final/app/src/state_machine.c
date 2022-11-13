@@ -1,5 +1,4 @@
 #include "state_machine.h"
-#include <stddef.h>
 
 static struct __fsm_state * get_state_ptr(fsm_t *st, uint8_t id) {
     for(uint8_t i=0; i<st->states_num; i++) {
@@ -11,12 +10,7 @@ static struct __fsm_state * get_state_ptr(fsm_t *st, uint8_t id) {
     return NULL;
 }
 
-void fsm_init(fsm_t *st) {
-    st->curr_state = NULL;
-	st->states_num = 0;
-}
-
-void fsm_define_state(fsm_t *st, uint8_t id, __fsm_behavior_t enter, __fsm_behavior_t execute, __fsm_behavior_t exit) {
+void fsm_add_state(fsm_t *st, uint8_t id, __fsm_behavior_t enter, __fsm_behavior_t execute, __fsm_behavior_t exit) {
 
 	if(st->states_num>=FSM_STATE_MAX_NUM)
 		return;
@@ -29,7 +23,7 @@ void fsm_define_state(fsm_t *st, uint8_t id, __fsm_behavior_t enter, __fsm_behav
 	st->states_num++;
 }
 
-void fsm_define_transition(fsm_t *st, uint8_t curr_id, uint8_t next_id, __fsm_getter_t get) {
+void fsm_add_transition(fsm_t *st, uint8_t curr_id, uint8_t next_id, __fsm_getter_t get) {
 
 	struct __fsm_state *curr_state = get_state_ptr(st, curr_id);
 	struct __fsm_state *next_state = get_state_ptr(st, next_id);
@@ -63,7 +57,7 @@ void fsm_update(fsm_t *st) {
 	if(!st->curr_state)
 		return;
 
-	const struct __fsm_event * event = NULL;
+	const struct __fsm_event *event = NULL;
 
     for(uint8_t i=0; i<st->curr_state->events_num; i++) {
 

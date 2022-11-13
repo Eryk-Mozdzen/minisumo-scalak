@@ -1,4 +1,12 @@
 #include "rc5.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include "state_machine.h"
+
+#define RC5_TIME_SHORT		889		// us
+#define RC5_TIME_LONG		1778	// us
+#define RC5_TIME_TOLERANCE	444		// us
+#define RC5_TIME_PRESCALER	16		// us/LSB
 
 typedef enum {
 	RC5_STATE_START1,
@@ -15,17 +23,17 @@ static volatile rc5_message_t message;
 static fsm_t fsm;
 
 static void emit1() {
-	message.frame |=(1<<(13 - bits_ready));
+	message |=(1<<(13 - bits_ready));
 	bits_ready++;
 }
 
 static void emit0() {
-	message.frame &=~(1<<(13 - bits_ready));
+	message &=~(1<<(13 - bits_ready));
 	bits_ready++;
 }
 
 static void reset() {
-	message.frame = 0;
+	message = 0;
 	bits_ready = 0;
 }
 
@@ -79,23 +87,19 @@ static uint8_t get_long_pulse() {
 
 void rc5_init() {
 
-	fsm_init(&fsm);
+	fsm_add_state(&fsm, RC5_STATE_START1,	NULL,	NULL, NULL);
+	fsm_add_state(&fsm, RC5_STATE_MID1,		emit1,	NULL, NULL);
+	fsm_add_state(&fsm, RC5_STATE_START0,	NULL,	NULL, NULL);
+	fsm_add_state(&fsm, RC5_STATE_MID0,		emit0,	NULL, NULL);
+	fsm_add_state(&fsm, RC5_STATE_RESET,	reset,	NULL, NULL);
 
-	// state definition
-	fsm_define_state(&fsm, RC5_STATE_START1,	NULL,	NULL, NULL);
-	fsm_define_state(&fsm, RC5_STATE_MID1,		emit1,	NULL, NULL);
-	fsm_define_state(&fsm, RC5_STATE_START0,	NULL,	NULL, NULL);
-	fsm_define_state(&fsm, RC5_STATE_MID0,		emit0,	NULL, NULL);
-	fsm_define_state(&fsm, RC5_STATE_RESET,		reset,	NULL, NULL);
-
-	// transition definition from RC5 graph and reset transition
-	fsm_define_transition(&fsm, RC5_STATE_START1,	RC5_STATE_MID1,		get_short_space);
-	fsm_define_transition(&fsm, RC5_STATE_MID1,		RC5_STATE_START1,	get_short_pulse);
-	fsm_define_transition(&fsm, RC5_STATE_MID1,		RC5_STATE_MID0,		get_long_pulse);
-	fsm_define_transition(&fsm, RC5_STATE_MID0,		RC5_STATE_MID1,		get_long_space);
-	fsm_define_transition(&fsm, RC5_STATE_MID0,		RC5_STATE_START0,	get_short_space);
-	fsm_define_transition(&fsm, RC5_STATE_START0,	RC5_STATE_MID0,		get_short_pulse);
-	fsm_define_transition(&fsm, RC5_STATE_RESET,	RC5_STATE_MID1,		NULL);
+	fsm_add_transition(&fsm, RC5_STATE_START1,	RC5_STATE_MID1,		get_short_space);
+	fsm_add_transition(&fsm, RC5_STATE_MID1,	RC5_STATE_START1,	get_short_pulse);
+	fsm_add_transition(&fsm, RC5_STATE_MID1,	RC5_STATE_MID0,		get_long_pulse);
+	fsm_add_transition(&fsm, RC5_STATE_MID0,	RC5_STATE_MID1,		get_long_space);
+	fsm_add_transition(&fsm, RC5_STATE_MID0,	RC5_STATE_START0,	get_short_space);
+	fsm_add_transition(&fsm, RC5_STATE_START0,	RC5_STATE_MID0,		get_short_pulse);
+	fsm_add_transition(&fsm, RC5_STATE_RESET,	RC5_STATE_MID1,		NULL);
 
 	fsm_start(&fsm, RC5_STATE_RESET);
 
@@ -144,6 +148,6 @@ ISR(INT0_vect) {
 
 	fsm_update(&fsm);
 
-	if(bits_ready==2 && message.start!=3)
+	if(bits_ready==2 && RC5_MESSAGE_START(message)!=3)
 		fsm_start(&fsm, RC5_STATE_RESET);
 }

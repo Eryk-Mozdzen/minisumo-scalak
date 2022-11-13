@@ -1,17 +1,12 @@
-#include <avr/io.h>
-#include <avr/interrupt.h>
-
-#include <scheduler.h>
-
 #include "led.h"
 #include "rc5.h"
-#ifdef PRINT
 #include "uart.h"
-#endif
 #include "periph.h"
 #include "motors.h"
-
 #include "robot.h"
+#include "scheduler.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
 #ifdef PRINT
 void print_sensor_info() {
@@ -50,9 +45,7 @@ int main() {
 
 	led_init();
 	rc5_init();
-	#ifdef PRINT
 	uart_init();
-	#endif
 	periph_init();
 	motors_init();
 
@@ -68,5 +61,11 @@ int main() {
 	scheduler_add_task(print_sensor_info, 100/TICK_MS);
 	#endif
 
+	scheduler_add_task(line_task, 100/TICK_MS);
+	scheduler_add_task(prox_task, 1);
+	scheduler_add_task(loop_task, 1);
+
 	scheduler_start();
+
+	return 0;
 }

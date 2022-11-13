@@ -2,6 +2,7 @@
 #define STATE_MACHINE_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 #define FSM_STATE_MAX_NUM	10
 #define FSM_EVENT_MAX_NUM	4
@@ -33,9 +34,8 @@ typedef struct {
 	uint8_t states_num;
 } fsm_t;
 
-void fsm_init(fsm_t *);
-void fsm_define_state(fsm_t *, uint8_t, __fsm_behavior_t, __fsm_behavior_t, __fsm_behavior_t);
-void fsm_define_transition(fsm_t *, uint8_t, uint8_t, __fsm_getter_t);
+void fsm_add_state(fsm_t *, uint8_t, __fsm_behavior_t, __fsm_behavior_t, __fsm_behavior_t);
+void fsm_add_transition(fsm_t *, uint8_t, uint8_t, __fsm_getter_t);
 
 void fsm_start(fsm_t *, uint8_t);
 void fsm_update(fsm_t *);

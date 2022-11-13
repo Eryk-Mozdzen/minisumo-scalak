@@ -1,12 +1,14 @@
 #include "led.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
 
 static struct {
 	uint8_t r, g, b;
 } color[1];
 
 void led_init() {
-	DDRB |=(1<<0);
-	PORTB &=~(1<<0);
+	DDRB |=(1<<PINB0);
+	PORTB &=~(1<<PINB0);
 
 	led_set(0, 0, 0);
 }

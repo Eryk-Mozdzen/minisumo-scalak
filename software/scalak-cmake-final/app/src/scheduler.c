@@ -1,5 +1,7 @@
 #include "scheduler.h"
 
+#define SCHEDULER_TASK_MAX_NUM	10
+
 typedef struct {
 	task_t task;
 	uint16_t next;

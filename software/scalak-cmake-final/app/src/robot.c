@@ -1,4 +1,16 @@
 #include "robot.h"
+#include "rc5.h"
+#include "led.h"
+#include "motors.h"
+#include "periph.h"
+#include "state_machine.h"
+#include "scheduler.h"
+
+#define ROBOT_EEPROM_ADDRESS_START		0x00
+#define ROBOT_EEPROM_ADDRESS_STOP		0x01
+#define ROBOT_EEPROM_ADDRESS_STATE		0x02
+
+#define ROBOT_READY_LED_COUNTER_MAX		((uint16_t)240)
 
 typedef enum {
 	ROBOT_STATE_READY = 0xFF,	// eeprom reset value
@@ -23,6 +35,7 @@ static const uint8_t array[ARRAY_SIZE][3] = {
 
 static fsm_t fsm;
 static int16_t counter;
+static uint16_t limit;
 
 static uint8_t eeprom_start_cmd;
 static uint8_t eeprom_stop_cmd;
@@ -33,24 +46,24 @@ static uint8_t flag_stop_cmd;
 
 static uint8_t flag_last_enemy_dir;
 
-static void loop() {
+void loop_task() {
 	rc5_message_t rc5_msg;
 
 	if(rc5_get_message(&rc5_msg)) {
-		if(rc5_msg.address==0x0B) {
+		if(RC5_MESSAGE_ADDRESS(rc5_msg)==0x0B) {
 			// programming command
 			flag_program_cmd = 1;
 
-			eeprom_start_cmd = (rc5_msg.command & 0xFE) + 1;
-			eeprom_stop_cmd = rc5_msg.command & 0xFE;
+			eeprom_start_cmd = (RC5_MESSAGE_COMMAND(rc5_msg) & 0xFE) + 1;
+			eeprom_stop_cmd = RC5_MESSAGE_COMMAND(rc5_msg) & 0xFE;
 
 			eeprom_write(ROBOT_EEPROM_ADDRESS_START, eeprom_start_cmd);
 			eeprom_write(ROBOT_EEPROM_ADDRESS_STOP, eeprom_stop_cmd);
-		} else if(rc5_msg.command==eeprom_start_cmd) {
+		} else if(RC5_MESSAGE_COMMAND(rc5_msg)==eeprom_start_cmd) {
 			// start command
 			flag_start_cmd = 1;
 
-		} else if(rc5_msg.command==eeprom_stop_cmd) {
+		} else if(RC5_MESSAGE_COMMAND(rc5_msg)==eeprom_stop_cmd) {
 			// stop command
 			flag_stop_cmd = 1;
 
@@ -87,6 +100,7 @@ static void ready_enter() {
 	motors_set(0, 0);
 
 	counter = 0;
+	limit = 20;
 }
 
 static void ready_execute() {
@@ -139,8 +153,6 @@ static void run_enter() {
 
 	flag_last_enemy_dir = switch_get();
 }
-
-static uint16_t limit = 20;
 
 static void run_execute() {
 
@@ -209,25 +221,21 @@ static void stop2_enter() {
 
 void robot_init() {
 
-	fsm_init(&fsm);
+	fsm_add_state(&fsm, ROBOT_STATE_READY,		ready_enter,	ready_execute,		NULL);
+	fsm_add_state(&fsm, ROBOT_STATE_PROGRAM,	program_enter,	program_execute,	NULL);
+	fsm_add_state(&fsm, ROBOT_STATE_RUN,		run_enter,		run_execute,		NULL);
+	fsm_add_state(&fsm, ROBOT_STATE_STOP1,		stop1_enter,	stop1_execute,		NULL);
+	fsm_add_state(&fsm, ROBOT_STATE_STOP2,		stop2_enter,	NULL,				NULL);
 
-	fsm_define_state(&fsm, ROBOT_STATE_READY,	ready_enter,	ready_execute,		NULL);
-	fsm_define_state(&fsm, ROBOT_STATE_PROGRAM,	program_enter,	program_execute,	NULL);
-	fsm_define_state(&fsm, ROBOT_STATE_RUN,		run_enter,		run_execute,		NULL);
-	fsm_define_state(&fsm, ROBOT_STATE_STOP1,	stop1_enter,	stop1_execute,		NULL);
-	fsm_define_state(&fsm, ROBOT_STATE_STOP2,	stop2_enter,	NULL,				NULL);
-
-	fsm_define_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_PROGRAM,	get_program);
-	fsm_define_transition(&fsm, ROBOT_STATE_PROGRAM,	ROBOT_STATE_READY,		get_timeout);
-	fsm_define_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_RUN,		get_start);
-	fsm_define_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_PROGRAM,	get_program);
-	fsm_define_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_STOP1,		get_stop);
-	fsm_define_transition(&fsm, ROBOT_STATE_STOP1,		ROBOT_STATE_STOP2,		get_timeout);
+	fsm_add_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_PROGRAM,	get_program);
+	fsm_add_transition(&fsm, ROBOT_STATE_PROGRAM,	ROBOT_STATE_READY,		get_timeout);
+	fsm_add_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_RUN,		get_start);
+	fsm_add_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_PROGRAM,	get_program);
+	fsm_add_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_STOP1,		get_stop);
+	fsm_add_transition(&fsm, ROBOT_STATE_STOP1,		ROBOT_STATE_STOP2,		get_timeout);
 
 	eeprom_start_cmd = eeprom_read(ROBOT_EEPROM_ADDRESS_START);
 	eeprom_stop_cmd = eeprom_read(ROBOT_EEPROM_ADDRESS_STOP);
 
 	fsm_start(&fsm, eeprom_read(ROBOT_EEPROM_ADDRESS_STATE));
-
-	scheduler_add_task(loop, 1);
 }

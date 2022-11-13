@@ -1,11 +1,13 @@
 #ifndef PERIPH_H
 #define PERIPH_H
 
-#include <avr/io.h>
-#include <scheduler.h>
+#include <stdint.h>
 
 #define LINE_THRESHOLD	600
 #define PROX_THRESHOLD	8
+
+void line_task();
+void prox_task();
 
 void periph_init();
 
