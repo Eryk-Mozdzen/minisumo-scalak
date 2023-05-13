@@ -46,8 +46,6 @@ target_link_options(${TARGET} PRIVATE
 	-mmcu=atmega328p
 )
 
-#target_link_libraries(${TARGET} PRIVATE)
-
 add_custom_command(
 	TARGET ${TARGET} POST_BUILD
 	COMMAND ${CMAKE_OBJCOPY} -O ihex ${TARGET} ${CMAKE_PROJECT_NAME}.hex
