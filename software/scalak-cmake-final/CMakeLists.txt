@@ -7,17 +7,17 @@ project(scalak-cmake-final)
 set(TARGET ${CMAKE_PROJECT_NAME}.elf)
 
 add_executable(${TARGET}
-	"app/src/main.c"
-	"app/src/led.c"
-	"app/src/periph.c"
-	"app/src/motors.c"
-	"app/src/robot.c"
-	"app/src/scheduler.c"
-	"app/src/state_machine.c"
+	"src/main.c"
+	"src/led.c"
+	"src/periph.c"
+	"src/motors.c"
+	"src/robot.c"
+	"src/scheduler.c"
+	"src/state_machine.c"
 )
 
 target_include_directories(${TARGET} PRIVATE
-	"app/inc"
+	"inc"
 )
 
 target_compile_options(${TARGET} PRIVATE
@@ -33,20 +33,32 @@ target_compile_definitions(${TARGET} PRIVATE
 	TICK_MS=8
 )
 
-OPTION(PRINT OFF)
-OPTION(MODULE OFF)
+set(PRINT OFF)
+set(PRINT ${PRINT} CACHE BOOL "")
+if(NOT DEFINED PRINT)
+    set(PRINT ${PRINT})
+endif()
 
-IF(PRINT)
+set(MODULE OFF)
+set(MODULE ${MODULE} CACHE BOOL "")
+if(NOT DEFINED MODULE)
+    set(MODULE ${MODULE})
+endif()
+
+message(STATUS "printf over UART: ${PRINT}")
+message(STATUS "external module:  ${MODULE}")
+
+if(PRINT)
 	target_compile_definitions(${TARGET} PRIVATE PRINT)
 	target_link_options(${TARGET} PRIVATE -Wl,-u,vfprintf -lprintf_flt)
-	target_sources(${TARGET} PRIVATE "app/src/uart.c")
-ENDIF(PRINT)
+	target_sources(${TARGET} PRIVATE "src/uart.c")
+endif()
 
-IF(MODULE)
+if(MODULE)
 	target_compile_definitions(${TARGET} PRIVATE EXTERNAL_MODULE)
-ELSE(MODULE)
-	target_sources(${TARGET} PRIVATE "app/src/rc5.c")
-ENDIF(MODULE)
+else()
+	target_sources(${TARGET} PRIVATE "src/rc5.c")
+endif()
 
 target_link_options(${TARGET} PRIVATE
 	-mmcu=atmega328p
