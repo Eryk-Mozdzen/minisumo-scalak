@@ -1,10 +1,13 @@
 #include "robot.h"
-//#include "rc5.h"
 #include "led.h"
 #include "motors.h"
 #include "periph.h"
 #include "state_machine.h"
 #include "scheduler.h"
+
+#ifndef EXTERNAL_MODULE
+#include "rc5.h"
+#endif
 
 #define ROBOT_EEPROM_ADDRESS_START		0x00
 #define ROBOT_EEPROM_ADDRESS_STOP		0x01
@@ -47,7 +50,8 @@ static uint8_t flag_stop_cmd;
 static uint8_t flag_last_enemy_dir;
 
 void loop_task() {
-	/*rc5_message_t rc5_msg;
+	#ifndef EXTERNAL_MODULE
+	rc5_message_t rc5_msg;
 
 	if(rc5_get_message(&rc5_msg)) {
 		if(RC5_MESSAGE_ADDRESS(rc5_msg)==0x0B) {
@@ -68,7 +72,8 @@ void loop_task() {
 			flag_stop_cmd = 1;
 
 		}
-	}*/
+	}
+	#endif
 
 	fsm_update(&fsm);
 	fsm_execute(&fsm);
@@ -77,7 +82,9 @@ void loop_task() {
 	flag_start_cmd = 0;
 	flag_stop_cmd = 0;
 }
-/*
+
+#ifndef EXTERNAL_MODULE
+
 static uint8_t get_program() {
 	return flag_program_cmd;
 }
@@ -93,7 +100,39 @@ static uint8_t get_start() {
 static uint8_t get_stop() {
 	return flag_stop_cmd;
 }
-*/
+
+#else
+
+static uint8_t get_module_start() {
+	static uint8_t last_state = 0;
+	const uint8_t state = !button_get();
+	uint8_t is_started = 0;
+
+	if(!last_state && state) {
+		is_started = 1;
+	}
+
+	last_state = state;
+
+	return is_started;
+}
+
+static uint8_t get_module_stop() {
+	static uint8_t last_state = 0;
+	const uint8_t state = !button_get();
+	uint8_t is_stopped = 0;
+
+	if(last_state && !state) {
+		is_stopped = 1;
+	}
+
+	last_state = state;
+
+	return is_stopped;
+}
+
+#endif
+
 static void ready_enter() {
 	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_READY);
 
@@ -122,7 +161,9 @@ static void ready_execute() {
 	counter++;
 	counter %=ROBOT_READY_LED_COUNTER_MAX;
 }
-/*
+
+#ifndef EXTERNAL_MODULE
+
 static void program_enter() {
 	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_READY);
 
@@ -145,7 +186,9 @@ static void program_execute() {
 
 	counter--;
 }
-*/
+
+#endif
+
 static void run_enter() {
 	led_set(0, 255, 0);
 
@@ -196,7 +239,9 @@ static void run_execute() {
 		255 - 4*dir
 	);
 }
-/*
+
+#ifndef EXTERNAL_MODULE
+
 static void stop1_enter() {
 	eeprom_write(ROBOT_EEPROM_ADDRESS_STATE, ROBOT_STATE_STOP1);
 
@@ -218,38 +263,21 @@ static void stop2_enter() {
 
 	led_set(255, 0, 0);
 }
-*/
-static uint8_t get_module_start() {
-	static uint8_t last_state = 0;
-	const uint8_t state = !button_get();
-	uint8_t is_started = 0;
 
-	if(!last_state && state) {
-		is_started = 1;
-	}
-
-	last_state = state;
-
-	return is_started;
-}
-
-static uint8_t get_module_stop() {
-	static uint8_t last_state = 0;
-	const uint8_t state = !button_get();
-	uint8_t is_stopped = 0;
-
-	if(last_state && !state) {
-		is_stopped = 1;
-	}
-
-	last_state = state;
-
-	return is_stopped;
-}
+#endif
 
 void robot_init() {
 
-	/*
+	#ifdef EXTERNAL_MODULE
+
+	fsm_add_state(&fsm, ROBOT_STATE_READY,		ready_enter,	ready_execute,		NULL);
+	fsm_add_state(&fsm, ROBOT_STATE_RUN,		run_enter,		run_execute,		NULL);
+
+	fsm_add_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_RUN,		get_module_start);
+	fsm_add_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_READY,		get_module_stop);
+
+	#else
+
 	fsm_add_state(&fsm, ROBOT_STATE_READY,		ready_enter,	ready_execute,		NULL);
 	fsm_add_state(&fsm, ROBOT_STATE_PROGRAM,	program_enter,	program_execute,	NULL);
 	fsm_add_state(&fsm, ROBOT_STATE_RUN,		run_enter,		run_execute,		NULL);
@@ -262,13 +290,8 @@ void robot_init() {
 	fsm_add_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_PROGRAM,	get_program);
 	fsm_add_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_STOP1,		get_stop);
 	fsm_add_transition(&fsm, ROBOT_STATE_STOP1,		ROBOT_STATE_STOP2,		get_timeout);
-	*/
 
-	fsm_add_state(&fsm, ROBOT_STATE_READY,		ready_enter,	ready_execute,		NULL);
-	fsm_add_state(&fsm, ROBOT_STATE_RUN,		run_enter,		run_execute,		NULL);
-
-	fsm_add_transition(&fsm, ROBOT_STATE_READY,		ROBOT_STATE_RUN,		get_module_start);
-	fsm_add_transition(&fsm, ROBOT_STATE_RUN,		ROBOT_STATE_READY,		get_module_stop);
+	#endif
 
 	eeprom_start_cmd = eeprom_read(ROBOT_EEPROM_ADDRESS_START);
 	eeprom_stop_cmd = eeprom_read(ROBOT_EEPROM_ADDRESS_STOP);

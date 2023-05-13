@@ -1,14 +1,16 @@
 #include "led.h"
-//#include "rc5.h"
 #include "periph.h"
 #include "motors.h"
 #include "robot.h"
 #include "scheduler.h"
-#include <avr/io.h>
 #include <avr/interrupt.h>
 
 #ifdef PRINT
 #include "uart.h"
+#endif
+
+#ifndef EXTERNAL_MODULE
+#include "rc5.h"
 #endif
 
 #ifdef PRINT
@@ -46,13 +48,16 @@ ISR(TIMER0_OVF_vect) {
 
 int main() {
 
-	//rc5_init();
 	led_init();
 	periph_init();
 	motors_init();
 
 	#ifdef PRINT
 	uart_init();
+	#endif
+
+	#ifndef EXTERNAL_MODULE
+	rc5_init();
 	#endif
 
 	// tick generation

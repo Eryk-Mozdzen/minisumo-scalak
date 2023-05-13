@@ -9,7 +9,6 @@ set(TARGET ${CMAKE_PROJECT_NAME}.elf)
 add_executable(${TARGET}
 	"app/src/main.c"
 	"app/src/led.c"
-	#"app/src/rc5.c"
 	"app/src/periph.c"
 	"app/src/motors.c"
 	"app/src/robot.c"
@@ -35,12 +34,19 @@ target_compile_definitions(${TARGET} PRIVATE
 )
 
 OPTION(PRINT OFF)
+OPTION(MODULE OFF)
 
 IF(PRINT)
 	target_compile_definitions(${TARGET} PRIVATE PRINT)
 	target_link_options(${TARGET} PRIVATE -Wl,-u,vfprintf -lprintf_flt)
 	target_sources(${TARGET} PRIVATE "app/src/uart.c")
 ENDIF(PRINT)
+
+IF(MODULE)
+	target_compile_definitions(${TARGET} PRIVATE EXTERNAL_MODULE)
+ELSE(MODULE)
+	target_sources(${TARGET} PRIVATE "app/src/rc5.c")
+ENDIF(MODULE)
 
 target_link_options(${TARGET} PRIVATE
 	-mmcu=atmega328p
