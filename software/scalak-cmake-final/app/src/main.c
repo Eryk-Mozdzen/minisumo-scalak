@@ -1,12 +1,15 @@
 #include "led.h"
-#include "rc5.h"
-#include "uart.h"
+//#include "rc5.h"
 #include "periph.h"
 #include "motors.h"
 #include "robot.h"
 #include "scheduler.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
+
+#ifdef PRINT
+#include "uart.h"
+#endif
 
 #ifdef PRINT
 void print_sensor_info() {
@@ -43,18 +46,21 @@ ISR(TIMER0_OVF_vect) {
 
 int main() {
 
+	//rc5_init();
 	led_init();
-	rc5_init();
-	uart_init();
 	periph_init();
 	motors_init();
+
+	#ifdef PRINT
+	uart_init();
+	#endif
 
 	// tick generation
 	// timer 0 overflow interrupt (8ms)
 	TCCR0B |=(1<<CS02);
     TIMSK0 |=(1<<TOIE0);
 	sei();
-	
+
 	robot_init();
 
 	#ifdef PRINT

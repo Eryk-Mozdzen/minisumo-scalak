@@ -1,5 +1,5 @@
 #include "robot.h"
-#include "rc5.h"
+//#include "rc5.h"
 #include "led.h"
 #include "motors.h"
 #include "periph.h"
@@ -47,7 +47,7 @@ static uint8_t flag_stop_cmd;
 static uint8_t flag_last_enemy_dir;
 
 void loop_task() {
-	rc5_message_t rc5_msg;
+	/*rc5_message_t rc5_msg;
 
 	if(rc5_get_message(&rc5_msg)) {
 		if(RC5_MESSAGE_ADDRESS(rc5_msg)==0x0B) {
@@ -68,7 +68,7 @@ void loop_task() {
 			flag_stop_cmd = 1;
 
 		}
-	}
+	}*/
 
 	fsm_update(&fsm);
 	fsm_execute(&fsm);

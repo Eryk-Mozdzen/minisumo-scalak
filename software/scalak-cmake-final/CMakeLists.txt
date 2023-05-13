@@ -9,8 +9,7 @@ set(TARGET ${CMAKE_PROJECT_NAME}.elf)
 add_executable(${TARGET}
 	"app/src/main.c"
 	"app/src/led.c"
-	"app/src/rc5.c"
-	"app/src/uart.c"
+	#"app/src/rc5.c"
 	"app/src/periph.c"
 	"app/src/motors.c"
 	"app/src/robot.c"
@@ -40,6 +39,7 @@ OPTION(PRINT OFF)
 IF(PRINT)
 	target_compile_definitions(${TARGET} PRIVATE PRINT)
 	target_link_options(${TARGET} PRIVATE -Wl,-u,vfprintf -lprintf_flt)
+	target_sources(${TARGET} PRIVATE "app/src/uart.c")
 ENDIF(PRINT)
 
 target_link_options(${TARGET} PRIVATE
