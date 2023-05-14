@@ -146,7 +146,7 @@ static void ready_execute() {
 
 	if(scheduler_tick_count%2)
 		return;
-	
+
 	const uint8_t (*color1)[3] = &array[((ARRAY_SIZE*counter)/ROBOT_READY_LED_COUNTER_MAX)%ARRAY_SIZE];
 	const uint8_t (*color2)[3] = &array[(((ARRAY_SIZE*counter)/ROBOT_READY_LED_COUNTER_MAX) + 1)%ARRAY_SIZE];
 
@@ -155,7 +155,7 @@ static void ready_execute() {
 	const uint8_t r = (((uint16_t)(*color2)[0])*fraq + ((uint16_t)(*color1)[0])*(ROBOT_READY_LED_COUNTER_MAX - fraq))/ROBOT_READY_LED_COUNTER_MAX;
 	const uint8_t g = (((uint16_t)(*color2)[1])*fraq + ((uint16_t)(*color1)[1])*(ROBOT_READY_LED_COUNTER_MAX - fraq))/ROBOT_READY_LED_COUNTER_MAX;
 	const uint8_t b = (((uint16_t)(*color2)[2])*fraq + ((uint16_t)(*color1)[2])*(ROBOT_READY_LED_COUNTER_MAX - fraq))/ROBOT_READY_LED_COUNTER_MAX;
-	
+
 	led_set(r/4, g/4, b/4);
 
 	counter++;
@@ -233,7 +233,7 @@ static void run_execute() {
 	const int16_t dir = sum/count;
 
 	flag_last_enemy_dir = dir>0;
-	
+
 	motors_set(
 		255 + 4*dir,
 		255 - 4*dir

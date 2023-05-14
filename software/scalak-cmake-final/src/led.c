@@ -1,5 +1,4 @@
 #include "led.h"
-#include <avr/io.h>
 #include <avr/interrupt.h>
 
 static struct {
@@ -18,8 +17,6 @@ void led_set(uint8_t red, uint8_t green, uint8_t blue) {
 	color[0].r = red;
 	color[0].g = green;
 	color[0].b = blue;
-
-	//uint8_t color[3] = {red, green, blue};
 
 	cli();
 
@@ -52,9 +49,9 @@ void led_set(uint8_t red, uint8_t green, uint8_t blue) {
 		"brcc .+2\n"
 		"cbi %2, %3\n"
 		"ret\n"
-				
+
 		"led_strip_asm_end%=: "
-	
+
 		: "=b" (color)
 		: "0" (color),
 		"I" (_SFR_IO_ADDR(PORTB)),

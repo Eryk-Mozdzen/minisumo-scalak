@@ -95,10 +95,10 @@ uint8_t eeprom_read(uint16_t address) {
 
 void eeprom_write(uint16_t address, uint8_t src) {
 	while(EECR & (1<<EEPE));
-	
+
 	EEAR = address;
 	EEDR = src;
-	
+
 	EECR |=(1<<EEMPE);
 	EECR |=(1<<EEPE);
 }
