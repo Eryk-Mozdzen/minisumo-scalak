@@ -4,25 +4,25 @@ set(CMAKE_TOOLCHAIN_FILE "avr-toolchain.cmake")
 
 project(scalak-cmake-final)
 
-set(TARGET ${CMAKE_PROJECT_NAME}.elf)
+set(TARGET_ELF ${CMAKE_PROJECT_NAME}.elf)
+set(TARGET_HEX ${CMAKE_PROJECT_NAME}.hex)
+set(TARGET_DUMP ${CMAKE_PROJECT_NAME}.dump)
 
-add_executable(${TARGET}
-	"app/src/main.c"
-	"app/src/led.c"
-	"app/src/rc5.c"
-	"app/src/uart.c"
-	"app/src/periph.c"
-	"app/src/motors.c"
-	"app/src/robot.c"
-	"app/src/scheduler.c"
-	"app/src/state_machine.c"
+add_executable(${TARGET_ELF}
+	"src/main.c"
+	"src/led.c"
+	"src/periph.c"
+	"src/motors.c"
+	"src/robot.c"
+	"src/scheduler.c"
+	"src/state_machine.c"
 )
 
-target_include_directories(${TARGET} PRIVATE
-	"app/inc"
+target_include_directories(${TARGET_ELF} PRIVATE
+	"inc"
 )
 
-target_compile_options(${TARGET} PRIVATE
+target_compile_options(${TARGET_ELF} PRIVATE
 	-Os
 	-Wall
 	-Wextra
@@ -30,32 +30,24 @@ target_compile_options(${TARGET} PRIVATE
 	-mmcu=atmega328p
 )
 
-target_compile_definitions(${TARGET} PRIVATE
+target_compile_definitions(${TARGET_ELF} PRIVATE
 	F_CPU=8000000UL
 	TICK_MS=8
 )
 
-OPTION(PRINT OFF)
+include(options.cmake)
 
-IF(PRINT)
-	target_compile_definitions(${TARGET} PRIVATE PRINT)
-	target_link_options(${TARGET} PRIVATE -Wl,-u,vfprintf -lprintf_flt)
-ENDIF(PRINT)
-
-target_link_options(${TARGET} PRIVATE
+target_link_options(${TARGET_ELF} PRIVATE
 	-mmcu=atmega328p
 )
 
-#target_link_libraries(${TARGET} PRIVATE)
-
-add_custom_command(
-	TARGET ${TARGET} POST_BUILD
-	COMMAND ${CMAKE_OBJCOPY} -O ihex ${TARGET} ${CMAKE_PROJECT_NAME}.hex
-	COMMAND ${CMAKE_OBJDUMP} -j .text -D ${TARGET} > ${CMAKE_PROJECT_NAME}.dump
-	COMMAND ${CMAKE_SIZE} ${TARGET}
+add_custom_command(TARGET ${TARGET_ELF} POST_BUILD
+	COMMAND ${CMAKE_OBJCOPY} -O ihex ${TARGET_ELF} ${TARGET_HEX}
+	COMMAND ${CMAKE_OBJDUMP} -j .text -D ${TARGET_ELF} > ${TARGET_DUMP}
+	COMMAND ${CMAKE_SIZE} ${TARGET_ELF}
 )
 
 add_custom_target(flash
-	avrdude -p m328p -c usbasp -e -U flash:w:${CMAKE_PROJECT_NAME}.hex:i
-	DEPENDS ${TARGET}
+	avrdude -p m328p -c usbasp -e -U flash:w:${TARGET_HEX}:i
+	DEPENDS ${TARGET_ELF}
 )

@@ -6,7 +6,7 @@ static fsm_state_t *get_state_ptr(fsm_t *st, fsm_state_id_t id) {
 			return &st->states[i];
         }
     }
-    
+
     return NULL;
 }
 

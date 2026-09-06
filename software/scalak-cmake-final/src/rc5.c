@@ -1,5 +1,4 @@
 #include "rc5.h"
-#include <avr/io.h>
 #include <avr/interrupt.h>
 #include "state_machine.h"
 
@@ -109,10 +108,10 @@ void rc5_init() {
 	EIMSK |=(1<<INT0);
 	EICRA |=(1<<ISC00);
 	EICRA &=~(1<<ISC01);
-	
+
 	TCCR2B |=(1<<CS22) | (1<<CS20);
 	TIMSK2 |=(1<<TOIE2);
-	
+
 	sei();
 }
 
@@ -142,7 +141,7 @@ ISR(INT0_vect) {
 
 	state = !(PIND & (1<<PIND2));
 	counter = TCNT2;
-	
+
 	TCNT2 = 0;
 	TCCR2B |=(1<<CS22) | (1<<CS20);
 

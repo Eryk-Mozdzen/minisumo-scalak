@@ -5,10 +5,9 @@ static int16_t power[2];
 static int16_t limit = 255;
 
 void motors_init() {
-
 	DDRD |=(1<<PIND6) | (1<<PIND7);
 	DDRB |=(1<<PINB1) | (1<<PINB2);
-	
+
 	TCCR1A |=(1<<COM1A1) | (1<<COM1B1) | (1<<WGM10);
 	TCCR1B |=(1<<CS10) | (1<<WGM12);
 }
